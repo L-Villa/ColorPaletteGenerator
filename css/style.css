@@ -20,7 +20,7 @@ svg {
 }
 
 .colors {
-  min-height: 80vh;
+  min-height: 90vh;
   display: flex;
   color: rgb(212, 212, 212);
 }
@@ -38,8 +38,11 @@ svg {
 
 .color h2 {
   font-size: 2rem;
+  position: relative;
+  top: 65%;
   cursor: pointer;
   opacity: 0.7;
+  text-transform: uppercase;
 }
 
 .sliders {
@@ -68,11 +71,10 @@ svg {
 .close-save,
 .close-library {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: 5px;
   padding: 0.5rem;
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
+  border-radius: 0.5rem;
   border: none;
   background: rgb(77, 77, 77);
   color: white;
@@ -117,7 +119,9 @@ svg {
 
 .adjust,
 .lock {
-  font-size: 2rem;
+  position: relative;
+  top: 90%;
+  font-size: 1.5rem;
   border: none;
   background: none;
   cursor: pointer;
