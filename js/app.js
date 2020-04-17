@@ -1,4 +1,5 @@
 //Global selections and variables
+const root = document.documentElement;
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
 const sliders = document.querySelectorAll('input[type="range"]');
@@ -63,6 +64,10 @@ closeAdjustments.forEach((button, index) => {
 // })
 
 // Functions ------------------------------------------------
+
+function sortAscending(a,b) {
+  return a-b;
+}
 
 function hexToHSL(H) {
   const HSLColor = chroma(H).hsl();
@@ -134,6 +139,23 @@ function generateHArrays() {
   return [hs, ss, ls];
 }
 
+//todo: work on this function. Try sorting colors so that dark are primary?
+//todo: also, try to make another webpage that uses more colors so that tetradic doesnt look bad?
+function setWebTemplateColors() {
+  root.style.setProperty("--primaryColor", finalColors[0]);
+  boxShadowColors = [];
+  color1 = chroma(finalColors[0]).darken(0.5).hex();
+  color2 = chroma(finalColors[0]).darken(0.8).hex();
+  boxShadowColors.push(color1);
+  boxShadowColors.push(color2);
+  root.style.setProperty("--boxShadow1", boxShadowColors[0]);
+  root.style.setProperty("--boxShadow2", boxShadowColors[1]);
+  root.style.setProperty("--secondaryColor", finalColors[1]);
+  root.style.setProperty("--accentColor", finalColors[2]);
+  root.style.setProperty("--accentColor2", finalColors[3]);
+  root.style.setProperty("--accentColor3", finalColors[4]);
+}
+
 function generateColorScheme() {
   // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
@@ -143,11 +165,6 @@ function generateColorScheme() {
   const randSchemeType = randomColorSchemeType();
   const randomHex = generateRandomColor();
   mainColorArray = hexToHSL(randomHex);
-
-  // generateHArrays();
-  // console.log(hs);
-  // console.log(ss);
-  // console.log(ls);
   let h1;
   let s1;
   let l1;
@@ -288,6 +305,7 @@ function generateColorScheme() {
     accentColors.push(accentColorSaturation);
   }
   finalColors = [...primaryColors, ...accentColors];
+  setWebTemplateColors();
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
     //add color to array
@@ -418,12 +436,12 @@ function copyToClipboard(hex) {
 }
 
 function openAdjustmentPanel(index) {
-  controls[index].children[0].classList.toggle('active');
+  controls[index].children[0].classList.toggle("active");
   sliderContainers[index].classList.toggle("active");
 }
 
 function closeAdjustmentPanel(index) {
-  controls[index].children[0].classList.toggle('active');
+  controls[index].children[0].classList.toggle("active");
   sliderContainers[index].classList.remove("active");
 }
 
@@ -432,7 +450,7 @@ function toggleLock(index) {
   const lockSVG = lockButton[index].children[0];
   const locker = lockButton[index];
   currentBg.classList.toggle("locked");
-  locker.classList.toggle('active');
+  locker.classList.toggle("active");
   if (lockSVG.classList.contains("fa-lock-open")) {
     lockSVG.classList.add("fa-lock");
   } else {
@@ -597,6 +615,61 @@ function getLocal() {
   }
 }
 
+//For webpage example---------------------------------------------------------------
+var container = document.getElementById("landingContainer");
+window.onmousemove = function (e) {
+  var x = -e.clientX / 5,
+    y = -e.clientY / 5;
+  container.style.backgroundPositionX = x + "px";
+  container.style.backgroundPositionY = y + "px";
+};
+
+document.addEventListener("mousemove", parallax);
+function parallax(f) {
+  this.querySelectorAll(".parallaxClass").forEach((Layer) => {
+    let x = (window.innerWidth - f.pageX * -2) / 100;
+    let y = (window.innerHeight - f.pageY * -2) / 100;
+    Layer.style.transform = `translate(${x}px,${y}px)`;
+  });
+}
+
+window.onload = function () {
+  document.getElementById("loader-wrapper").style.display = "none";
+  document.body.classList.remove("stop-scrolling");
+};
+
+const hamburger = document.querySelector(".hamburger");
+const navLinks = document.querySelector(".nav-links");
+const links = document.querySelectorAll(".nav-links li");
+hamburger.addEventListener("click", () => {
+  navLinks.classList.toggle("open");
+  if (document.body.classList.contains("stop-scrolling") == false) {
+    document.body.classList.add("stop-scrolling");
+  } else {
+    document.body.classList.remove("stop-scrolling");
+  }
+  links.forEach((link) => {
+    link.classList.toggle("fade");
+  });
+});
+
+// mybutton = document.getElementById("myBtn");
+// window.onscroll = function () {
+//   scrollFunction();
+// };
+// function scrollFunction() {
+//   if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+//     mybutton.style.display = "block";
+//   } else {
+//     mybutton.style.display = "none";
+//   }
+// }
+// function topFunction() {
+//   document.body.scrollTop = 0;
+//   document.documentElement.scrollTop = 0;
+// }
+
+//--Function initialization ------------------------------------------------
 function init() {
   getLocal();
   generateColorScheme();
