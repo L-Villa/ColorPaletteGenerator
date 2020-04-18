@@ -64,9 +64,14 @@ closeAdjustments.forEach((button, index) => {
 // })
 
 // Functions ------------------------------------------------
-
-function sortAscending(a,b) {
-  return a-b;
+//!So i can just generate random colors straight to hsl. Only convert to Hex for the HexText?
+function generateRandomColorHSL() {
+  const H = chroma.random().hsl();
+  return H;
+}
+function generateRandomColor() {
+  const H = chroma.random().hex();
+  return H;
 }
 
 function hexToHSL(H) {
@@ -80,6 +85,7 @@ function hexToHSL(H) {
 
 function HSLToHex(hslArray) {
   const hexColor = chroma.hsl(hslArray[0], hslArray[1], hslArray[2]).hex();
+  // const hexColor = chroma.hsl(hslArray[0], hslArray[1], hslArray[2]).hsl();
   return hexColor;
 }
 
@@ -89,7 +95,6 @@ let analogousColor = false;
 let splitComplimentaryColor = false;
 let triadicColor = false;
 let tetradicColor = false;
-
 function randomColorSchemeType() {
   randNo = Math.floor(Math.random() * 6) + 1;
   complimentaryColor = false;
@@ -127,27 +132,28 @@ function randDecimal() {
   return randNo;
 }
 
-function generateHArrays() {
-  hs = [];
-  ss = [];
-  ls = [];
-  for (let i = 0; i < 3; i++) {
-    hs[i] = mainColorArray[0];
-    ss[i] = mainColorArray[1];
-    ls[i] = mainColorArray[2];
-  }
-  return [hs, ss, ls];
+//todo: try to figure this out. Need to sort by hue first. Then sort those by lightness?
+sortedColors = [];
+function ColorHSL(hue, saturation, lightness) {
+  this.hue = hue;
+  this.saturation = saturation;
+  this.lightness = lightness;
 }
+for (i = 0; i < 5; i++) {
+  sortedColors.push(new ColorHSL(i, i, i));
+}
+sortTheseColors = [...sortedColors];
+sortTheseColors.sort((a, b) => a.lightness - b.lightness);
 
 //todo: work on this function. Try sorting colors so that dark are primary?
 //todo: also, try to make another webpage that uses more colors so that tetradic doesnt look bad?
 function setWebTemplateColors() {
   root.style.setProperty("--primaryColor", finalColors[0]);
   boxShadowColors = [];
-  color1 = chroma(finalColors[0]).darken(0.5).hex();
-  color2 = chroma(finalColors[0]).darken(0.8).hex();
-  boxShadowColors.push(color1);
-  boxShadowColors.push(color2);
+  boxShadowLight = chroma(finalColors[0]).darken(0.3).hex();
+  boxShadowDark = chroma(finalColors[0]).darken(0.8).hex();
+  boxShadowColors.push(boxShadowDark);
+  boxShadowColors.push(boxShadowLight);
   root.style.setProperty("--boxShadow1", boxShadowColors[0]);
   root.style.setProperty("--boxShadow2", boxShadowColors[1]);
   root.style.setProperty("--secondaryColor", finalColors[1]);
@@ -156,15 +162,89 @@ function setWebTemplateColors() {
   root.style.setProperty("--accentColor3", finalColors[4]);
 }
 
+function createAccentColors() {
+  const numberOfColors = primaryColors.length;
+  const numberOfAccents = 5 - numberOfColors;
+  for (i = 0; i < numberOfAccents; i++) {
+    chooseColor = Math.floor(Math.random() * numberOfColors);
+    saturationRandNo = Math.random() * 3;
+    darkenRandNo = Math.random() * 4;
+    accentColor = primaryColors[chooseColor];
+    const lum = chroma(accentColor).luminance();
+    if (lum >= 0.8 && lum < 1) {
+      accentColorSaturation = chroma(accentColor)
+        .desaturate(saturationRandNo)
+        .darken(darkenRandNo)
+        .hex();
+    } else if (lum >= 0.5 && lum < 0.8) {
+      accentColorSaturation = chroma(accentColor)
+        .desaturate(saturationRandNo)
+        .darken(darkenRandNo)
+        .hex();
+    } else if (lum >= 0.3 && lum < 0.5) {
+      accentColorSaturation = chroma(accentColor)
+        .saturate(saturationRandNo)
+        .brighten(darkenRandNo)
+        .hex();
+    } else {
+      accentColorSaturation = chroma(accentColor)
+        .saturate(saturationRandNo)
+        .brighten(darkenRandNo)
+        .hex();
+    }
+    accentColors.push(accentColorSaturation);
+  }
+}
+
+//!Youre working on this accent color generator......................................
+function createAccentColors2(NoAccents, colorLocation, array) {
+  // const numberOfColors = primaryColors.length;
+  // const numberOfAccents = 5 - numberOfColors;
+  const numberOfAccents = NoAccents;
+  for (i = 0; i < numberOfAccents; i++) {
+    chooseColor = colorLocation;
+    saturationRandNo = Math.random() * 3;
+    darkenRandNo = Math.random() * 4;
+    accentColor = array[chooseColor];
+
+    
+    const lum = chroma(accentColor).luminance();
+    if (lum >= 0.8 && lum < 1) {
+      accentColorSaturation = chroma(accentColor)
+        .desaturate(saturationRandNo)
+        .darken(darkenRandNo)
+        .hex();
+    } else if (lum >= 0.5 && lum < 0.8) {
+      accentColorSaturation = chroma(accentColor)
+        .desaturate(saturationRandNo)
+        .darken(darkenRandNo)
+        .hex();
+    } else if (lum >= 0.3 && lum < 0.5) {
+      accentColorSaturation = chroma(accentColor)
+        .saturate(saturationRandNo)
+        .brighten(darkenRandNo)
+        .hex();
+    } else {
+      accentColorSaturation = chroma(accentColor)
+        .saturate(saturationRandNo)
+        .brighten(darkenRandNo)
+        .hex();
+    }
+    accentColors.push(accentColorSaturation);
+  }
+}
+
 function generateColorScheme() {
   // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
   mainColors = [];
   accentColors = [];
   colorLuminance = [];
-  const randSchemeType = randomColorSchemeType();
-  const randomHex = generateRandomColor();
-  mainColorArray = hexToHSL(randomHex);
+  randomColorSchemeType();
+  //!These lines create and convert randomHex to hsl but I dont need hex straight away
+  //const randomHex = generateRandomColor();
+  // mainColorArray = hexToHSL(randomHex);
+  mainColorArray = generateRandomColorHSL();
   let h1;
   let s1;
   let l1;
@@ -185,8 +265,14 @@ function generateColorScheme() {
   secondColor = [];
   thirdColor = [];
   fourthColor = [];
+  accentColors = [];
   if (complimentaryColor) {
     //----------This 150 should be 180 but that is not giving me right color against blue
+    // const primaryColorLocation = 0;
+    // const numberOfPrimaryAccents = 2;
+    // createAccentColors2(numberOfPrimaryAccents, primaryColorLocation, mainColorArray);
+
+
     h1 = Math.abs(mainColorArray[0] + 180 - 360);
     s1 = Math.abs(mainColorArray[1] - randDecimal());
     l1 = Math.abs(mainColorArray[2] - randDecimal());
@@ -273,37 +359,8 @@ function generateColorScheme() {
   } else {
     primaryColors = [...mainColor, ...secondColor];
   }
-  const numberOfColors = primaryColors.length;
-  const numberOfAccents = 5 - numberOfColors;
-  for (i = 0; i < numberOfAccents; i++) {
-    chooseColor = Math.floor(Math.random() * numberOfColors);
-    saturationRandNo = Math.random() * 3;
-    darkenRandNo = Math.random() * 4;
-    accentColor = primaryColors[chooseColor];
-    const lum = chroma(accentColor).luminance();
-    if (lum >= 0.8 && lum < 1) {
-      accentColorSaturation = chroma(accentColor)
-        .desaturate(saturationRandNo)
-        .darken(darkenRandNo)
-        .hex();
-    } else if (lum >= 0.5 && lum < 0.8) {
-      accentColorSaturation = chroma(accentColor)
-        .desaturate(saturationRandNo)
-        .darken(darkenRandNo)
-        .hex();
-    } else if (lum >= 0.3 && lum < 0.5) {
-      accentColorSaturation = chroma(accentColor)
-        .saturate(saturationRandNo)
-        .brighten(darkenRandNo)
-        .hex();
-    } else {
-      accentColorSaturation = chroma(accentColor)
-        .saturate(saturationRandNo)
-        .brighten(darkenRandNo)
-        .hex();
-    }
-    accentColors.push(accentColorSaturation);
-  }
+  //!generate accent colors here or above?
+  createAccentColors()
   finalColors = [...primaryColors, ...accentColors];
   setWebTemplateColors();
   colorDivs.forEach((div, index) => {
@@ -319,7 +376,7 @@ function generateColorScheme() {
     div.style.backgroundColor = finalColors[index];
     hexText.innerText = finalColors[index];
     //check for contrast
-    checkTextContrast(finalColors[index], hexText);
+    checkContrast(finalColors[index], hexText);
     //initial colorize sliders
     const color = chroma(finalColors[index]);
     const sliders = div.querySelectorAll(".sliders input");
@@ -332,17 +389,12 @@ function generateColorScheme() {
   resetInputs();
   //check for button contrast
   adjustButton.forEach((button, index) => {
-    checkTextContrast(initialColors[index], button);
-    checkTextContrast(initialColors[index], lockButton[index]);
+    checkContrast(initialColors[index], button);
+    checkContrast(initialColors[index], lockButton[index]);
   });
 }
 
-function generateRandomColor() {
-  const H = chroma.random().hex();
-  return H;
-}
-
-function checkTextContrast(color, text) {
+function checkContrast(color, text) {
   const luminance = chroma(color).luminance();
   if (luminance > 0.5) {
     text.style.color = "rgb(30,30,30)";
@@ -394,9 +446,9 @@ function updateTextUI(index) {
   const icons = activeDiv.querySelectorAll(".controls button");
   textHex.innerText = color.hex();
   //check contrast
-  checkTextContrast(color, textHex);
+  checkContrast(color, textHex);
   for (icon of icons) {
-    checkTextContrast(color, icon);
+    checkContrast(color, icon);
   }
 }
 
@@ -534,7 +586,7 @@ function savePalette(e) {
       initialColors.push(color);
       colorDivs[index].style.backgroundColor = color;
       const text = colorDivs[index].children[0];
-      checkTextContrast(color, text);
+      checkContrast(color, text);
       updateTextUI(index);
     });
     resetInputs();
@@ -601,7 +653,7 @@ function getLocal() {
           initialColors.push(color);
           colorDivs[index].style.backgroundColor = color;
           const text = colorDivs[index].children[0];
-          checkTextContrast(color, text);
+          checkContrast(color, text);
           updateTextUI(index);
         });
         resetInputs();
