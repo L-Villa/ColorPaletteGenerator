@@ -100,7 +100,11 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  height: 20vh;
+  height: 10vh;
+  background: rgb(230, 230, 230);
+}
+.panel {
+  display: flex;
 }
 
 .panel button {
@@ -157,7 +161,6 @@ svg {
   opacity: 1;
   transition: all 0.2s ease-in-out;
 }
-
 
 input[type="range"] {
   -webkit-appearance: none;
@@ -278,4 +281,18 @@ input[type="range"] {
   font-size: 1.2rem;
   color: white;
   background: rgb(71, 71, 71);
+}
+
+.webPageExampleContainer {
+  background: rgb(255, 255, 255);
+}
+
+.webPageExample {
+  border-style: solid;
+  border-color: rgb(175, 175, 175);
+  position: relative;
+  width: 70%;
+  margin: 5% 15%;
+  border-radius: 2rem;
+  /* padding: 10vh; */
 }
