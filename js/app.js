@@ -97,7 +97,7 @@ let triadicColor = false;
 let tetradicColor = false;
 function randomColorSchemeType() {
   // randNo = Math.floor(Math.random() * 6) + 1;
-  randNo = Math.floor(Math.random() * 2) + 1;
+  randNo = Math.floor(Math.random() * 6) + 1;
   complimentaryColor = false;
   monochromaticColor = false;
   analogousColor = false;
@@ -184,8 +184,7 @@ function setWebTemplateColors() {
 //   }
 // }
 
-//!Youre working on this accent color generator......................................
-function createAccentColors2(NoAccents, colorLocation, array) {
+function generateAccent(NoAccents, colorLocation, array) {
   const numberOfAccents = NoAccents;
   for (i = 0; i < numberOfAccents; i++) {
     chooseColor = colorLocation;
@@ -219,7 +218,6 @@ function createAccentColors2(NoAccents, colorLocation, array) {
   }
 }
 
-//todo: try to figure this out. Need to sort by hue first. Then sort those by lightness?
 function ColorHSL(hue, saturation, lightness, luminance) {
   this.hue = hue;
   this.saturation = saturation;
@@ -262,11 +260,39 @@ function createSortableArray() {
     primaryColors.sort((a, b) => a.luminance - b.luminance);
     secondaryColors.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...primaryColors, ...secondaryColors];
-
     console.log("comp is not issue");
   } else if (monochromaticColor) {
-    console.log("mono is not issue");
     sortTheseColors.sort((a, b) => a.luminance - b.luminance);
+    console.log("mono is not issue");
+  } else if (analogousColor) {
+    anaSort = [...sortTheseColors];
+    firstColor = [anaSort[0], anaSort[3]];
+    secondColor = [anaSort[1]];
+    thirdColor = [anaSort[2], anaSort[4]];
+    firstColor.sort((a, b) => a.luminance - b.luminance);
+    thirdColor.sort((a, b) => b.luminance - a.luminance);
+    sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
+    console.log("analagous is not issue");
+  } else if (splitComplimentaryColor) {
+    splitSort = [...sortTheseColors];
+    firstColor = [splitSort[1], splitSort[3]];
+    secondColor = [splitSort[0]];
+    thirdColor = [splitSort[2], splitSort[4]];
+    firstColor.sort((a, b) => a.luminance - b.luminance);
+    thirdColor.sort((a, b) => b.luminance - a.luminance);
+    sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
+    console.log("split is not issue");
+  } else if (triadicColor) {
+    triSort = [...sortTheseColors];
+    firstColor = [triSort[1], triSort[3]];
+    secondColor = [triSort[0]];
+    thirdColor = [triSort[2], triSort[4]];
+    firstColor.sort((a, b) => a.luminance - b.luminance);
+    thirdColor.sort((a, b) => b.luminance - a.luminance);
+    sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
+    console.log("triadic is not issue");
+  } else if (tetradicColor) {
+    console.log("tetra is not issue");
   }
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const hexColor = chroma
@@ -291,9 +317,6 @@ function generateColorScheme() {
   accentColors2 = [];
   colorLuminance = [];
   randomColorSchemeType();
-  //!These lines create and convert randomHex to hsl but I dont need hex straight away
-  //const randomHex = generateRandomColor();
-  // mainColorArray = hexToHSL(randomHex);
   mainColorArray = generateRandomColorHSL();
   let h1;
   let s1;
@@ -304,9 +327,9 @@ function generateColorScheme() {
   let h3;
   let s3;
   let l3;
-  let hslString1;
-  let hslString2;
-  let hslString3;
+  // let hslString1;
+  // let hslString2;
+  // let hslString3;
   const a = 1;
   primaryColors = [];
   h1Array = [];
@@ -322,7 +345,7 @@ function generateColorScheme() {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 2;
     const numberOfSecondaryAccents = 1;
-    createAccentColors2(
+    generateAccent(
       numberOfPrimaryAccents,
       primaryColorLocation,
       mainColorArray
@@ -338,7 +361,7 @@ function generateColorScheme() {
     h1Array.push(h1, s1, l1, a);
     secondColorArray = h1Array;
     secondColor = [HSLToHex(h1Array)];
-    createAccentColors2(
+    generateAccent(
       numberOfSecondaryAccents,
       primaryColorLocation,
       secondColorArray
@@ -348,24 +371,17 @@ function generateColorScheme() {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 4;
     const numberOfSecondaryAccents = 0;
-    createAccentColors2(
+    generateAccent(
       numberOfPrimaryAccents,
       primaryColorLocation,
       mainColorArray
     );
     createSortableArray();
-
-    // h1 = Math.abs(mainColorArray[0] - randDecimal() * 2);
-    // s1 = Math.abs(mainColorArray[1] - randDecimal());
-    // l1 = Math.abs(mainColorArray[2] - randDecimal());
-    // hslString1 = "hsl(" + h1 + "," + s1 * 100 + "%," + l1 * 100 + "%)";
-    // h1Array.push(h1, s1, l1);
-    // secondColor = [HSLToHex(h1Array)];
   } else if (analogousColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 1;
     const numberOfSecondaryAccents = 1;
-    createAccentColors2(
+    generateAccent(
       numberOfPrimaryAccents,
       primaryColorLocation,
       mainColorArray
@@ -375,72 +391,134 @@ function generateColorScheme() {
     } else {
       h1 = Math.abs(mainColorArray[0] + 60 - 360);
     }
-    s1 = Math.abs(mainColorArray[1] - randDecimal());
-    l1 = Math.abs(mainColorArray[2] - randDecimal());
+    s1 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l1 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
     if (mainColorArray[0] <= 240) {
       h2 = mainColorArray[0] + 120;
     } else {
       h2 = Math.abs(mainColorArray[0] + 120 - 360);
     }
-    s2 = Math.abs(mainColorArray[1] - randDecimal());
-    l2 = Math.abs(mainColorArray[2] - randDecimal());
-    // hslString1 = "hsl(" + h1 + "," + s1 * 100 + "%," + l1 * 100 + "%)";
-    // hslString2 = "hsl(" + h2 + "," + s1 * 100 + "%," + l2 * 100 + "%)";
+    s2 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l2 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
     h1Array = [h1, s1, l1, a];
     h2Array = [h2, s2, l2, a];
+    secondColorArray = h1Array;
+    thirdColorArray = h2Array;
     secondColor = [HSLToHex(h1Array)];
     thirdColor = [HSLToHex(h2Array)];
-    createAccentColors2(
+    generateAccent(
+      numberOfSecondaryAccents,
+      primaryColorLocation,
+      thirdColorArray
+    );
+    createSortableArray();
+  } else if (splitComplimentaryColor) {
+    const primaryColorLocation = 0;
+    const numberOfSecondaryAccents = 1;
+    if (mainColorArray[0] <= 210) {
+      h1 = mainColorArray[0] + 150;
+    } else {
+      h1 = Math.abs(mainColorArray[0] + 150 - 360);
+    }
+    s1 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l1 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    if (mainColorArray[0] <= 150) {
+      h2 = mainColorArray[0] + 210;
+    } else {
+      h2 = Math.abs(mainColorArray[0] + 210 - 360);
+    }
+    s2 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l2 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    h1Array = [h1, s1, l1, a];
+    h2Array = [h2, s2, l2, a];
+    secondColorArray = h1Array;
+    thirdColorArray = h2Array;
+    secondColor = [HSLToHex(h1Array)];
+    thirdColor = [HSLToHex(h2Array)];
+    generateAccent(
       numberOfSecondaryAccents,
       primaryColorLocation,
       secondColorArray
     );
+    generateAccent(
+      numberOfSecondaryAccents,
+      primaryColorLocation,
+      thirdColorArray
+    );
     createSortableArray();
-  } else if (splitComplimentaryColor) {
-    h1 = Math.abs(mainColorArray[0] + 150 - 360);
-    s1 = Math.abs(mainColorArray[1] - randDecimal());
-    l1 = Math.abs(mainColorArray[2] - randDecimal());
-    h2 = Math.abs(mainColorArray[0] + 210 - 360);
-    s2 = Math.abs(mainColorArray[1] - randDecimal());
-    l2 = Math.abs(mainColorArray[2] - randDecimal());
-    hslString1 = "hsl(" + h1 + "," + s1 * 100 + "%," + l1 * 100 + "%)";
-    hslString2 = "hsl(" + h2 + "," + s1 * 100 + "%," + l2 * 100 + "%)";
-    h1Array = [h1, s1, l1];
-    h2Array = [h2, s2, l2];
-    secondColor = [HSLToHex(h1Array)];
-    thirdColor = [HSLToHex(h2Array)];
   } else if (triadicColor) {
-    h1 = Math.abs(mainColorArray[0] + 120 - 360);
-    s1 = Math.abs(mainColorArray[1] - randDecimal());
-    l1 = Math.abs(mainColorArray[2] - randDecimal());
-    h2 = Math.abs(mainColorArray[0] + 240 - 360);
-    s2 = Math.abs(mainColorArray[1] - randDecimal());
-    l2 = Math.abs(mainColorArray[2] - randDecimal());
-    hslString1 = "hsl(" + h1 + "," + s1 * 100 + "%," + l1 * 100 + "%)";
-    hslString2 = "hsl(" + h2 + "," + s1 * 100 + "%," + l2 * 100 + "%)";
-    h1Array = [h1, s1, l1];
-    h2Array = [h2, s2, l2];
+    const primaryColorLocation = 0;
+    const numberOfSecondaryAccents = 1;
+    if (mainColorArray[0] <= 240) {
+      h1 = mainColorArray[0] + 120;
+    } else {
+      h1 = Math.abs(mainColorArray[0] + 120 - 360);
+    }
+    s1 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l1 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    if (mainColorArray[0] <= 120) {
+      h2 = mainColorArray[0] + 240;
+    } else {
+      h2 = Math.abs(mainColorArray[0] + 240 - 360);
+    }
+    s2 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l2 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    h1Array = [h1, s1, l1, a];
+    h2Array = [h2, s2, l2, a];
+    secondColorArray = h1Array;
+    thirdColorArray = h2Array;
     secondColor = [HSLToHex(h1Array)];
     thirdColor = [HSLToHex(h2Array)];
+    generateAccent(
+      numberOfSecondaryAccents,
+      primaryColorLocation,
+      secondColorArray
+    );
+    generateAccent(
+      numberOfSecondaryAccents,
+      primaryColorLocation,
+      thirdColorArray
+    );
+    createSortableArray();
   } else if (tetradicColor) {
-    h1 = Math.abs(mainColorArray[0] + 90 - 360);
-    s1 = Math.abs(mainColorArray[1] - randDecimal());
-    l1 = Math.abs(mainColorArray[2] - randDecimal());
-    h2 = Math.abs(mainColorArray[0] + 180 - 360);
-    s2 = Math.abs(mainColorArray[1] - randDecimal());
-    l2 = Math.abs(mainColorArray[2] - randDecimal());
-    h3 = Math.abs(mainColorArray[0] + 270 - 360);
-    s3 = Math.abs(mainColorArray[1] - randDecimal());
-    l3 = Math.abs(mainColorArray[2] - randDecimal());
-    hslString1 = "hsl(" + h1 + "," + s1 * 100 + "%," + l1 * 100 + "%)";
-    hslString2 = "hsl(" + h2 + "," + s1 * 100 + "%," + l3 * 100 + "%)";
-    hslString3 = "hsl(" + h3 + "," + s1 * 100 + "%," + l2 * 100 + "%)";
-    h1Array = [h1, s1, l1];
-    h2Array = [h2, s2, l2];
-    h3Array = [h3, s3, l3];
+    const primaryColorLocation = 0;
+    const numberOfPrimaryAccents = 1;
+    generateAccent(
+      numberOfPrimaryAccents,
+      primaryColorLocation,
+      mainColorArray
+    );
+    if (mainColorArray[0] <= 270) {
+      h1 = mainColorArray[0] + 90;
+    } else {
+      h1 = Math.abs(mainColorArray[0] + 90 - 360);
+    }
+    s1 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l1 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    if (mainColorArray[0] <= 180) {
+      h2 = mainColorArray[0] + 180;
+    } else {
+      h2 = Math.abs(mainColorArray[0] + 180 - 360);
+    }
+    s2 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l2 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    if (mainColorArray[0] <= 90) {
+      h2 = mainColorArray[0] + 270;
+    } else {
+      h2 = Math.abs(mainColorArray[0] + 270 - 360);
+    }
+    s3 = Math.abs(mainColorArray[1] - randDecimal() * 0.05);
+    l3 = Math.abs(mainColorArray[2] - randDecimal() * 0.05);
+    h1Array = [h1, s1, l1, a];
+    h2Array = [h2, s2, l2, a];
+    h3Array = [h3, s3, l3, a];
+    secondColorArray = h1Array;
+    thirdColorArray = h2Array;
+    fourthColorArray = h3Array;
     secondColor = [HSLToHex(h1Array)];
     thirdColor = [HSLToHex(h2Array)];
     fourthColor = [HSLToHex(h3Array)];
+    createSortableArray();
   } else {
     console.log("Did not understand");
   }
