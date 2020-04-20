@@ -145,7 +145,7 @@ svg {
   opacity: 0;
 }
 
-/* !For now there is no pointer events on lock because it messes something up */
+/* !For now there are no pointer events on lock because it messes something up */
 .lock {
   pointer-events: none;
 }
@@ -291,8 +291,8 @@ input[type="range"] {
   border-style: solid;
   border-color: rgb(175, 175, 175);
   position: relative;
-  width: 70%;
-  margin: 5% 15%;
+  width: 60%;
+  margin: 5% 20%;
   border-radius: 2rem;
   /* padding: 10vh; */
 }

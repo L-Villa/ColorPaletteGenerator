@@ -16,6 +16,7 @@ let initialColors;
 let savedPalettes = [];
 
 //event listeners
+//todo: remove the generate button. Only use space to generate so that it doesnt mess things up
 generateBtn.addEventListener("click", generateColorScheme);
 window.addEventListener("keydown", function (e) {
   if (e.keyCode === 32) {
@@ -104,7 +105,7 @@ function randomColorSchemeType() {
   splitComplimentaryColor = false;
   triadicColor = false;
   tetradicColor = false;
-  switch (randNo) {
+  switch (3) {
     case 1:
       complimentaryColor = true;
       break;
@@ -136,7 +137,6 @@ function randDecimal() {
 //todo: work on this function. Try sorting colors so that dark are primary?
 //todo: also, try to make another webpage that uses more colors so that tetradic doesnt look bad?
 function setWebTemplateColors() {
-  root.style.setProperty("--primaryColor", finalColors[0]);
   boxShadowColors = [];
   boxShadowLight = chroma(finalColors[0]).darken(0.3).hex();
   boxShadowDark = chroma(finalColors[0]).darken(0.8).hex();
@@ -144,10 +144,26 @@ function setWebTemplateColors() {
   boxShadowColors.push(boxShadowLight);
   root.style.setProperty("--boxShadow1", boxShadowColors[0]);
   root.style.setProperty("--boxShadow2", boxShadowColors[1]);
-  root.style.setProperty("--secondaryColor", finalColors[1]);
-  root.style.setProperty("--accentColor", finalColors[2]);
-  root.style.setProperty("--accentColor2", finalColors[3]);
-  root.style.setProperty("--accentColor3", finalColors[4]);
+
+  if (complimentaryColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[4]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[3]);
+    root.style.setProperty("--accentColor3", finalColors[1]);
+  } else if (monochromaticColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[1]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[2]);
+    root.style.setProperty("--accentColor3", finalColors[2]);
+  } else if (analogousColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[4]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[3]);
+    root.style.setProperty("--accentColor3", finalColors[0]);
+  }
 }
 
 // function createAccentColors() {
@@ -226,7 +242,7 @@ function ColorHSL(hue, saturation, lightness, luminance) {
 }
 let sortableColors = [];
 let sortedHex = [];
-function createSortableArray() {
+function sortColors() {
   if (fourthColor.length > 0) {
     primaryColors = [
       ...mainColor,
@@ -292,8 +308,9 @@ function createSortableArray() {
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
     console.log("triadic is not issue");
   } else if (tetradicColor) {
+    //tetradic does not require the colors to be sorted
     console.log("tetra is not issue");
-  }
+  } // I should add an else statement
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const hexColor = chroma
       .hsl(
@@ -366,7 +383,7 @@ function generateColorScheme() {
       primaryColorLocation,
       secondColorArray
     );
-    createSortableArray();
+    sortColors();
   } else if (monochromaticColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 4;
@@ -376,7 +393,7 @@ function generateColorScheme() {
       primaryColorLocation,
       mainColorArray
     );
-    createSortableArray();
+    sortColors();
   } else if (analogousColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 1;
@@ -411,7 +428,7 @@ function generateColorScheme() {
       primaryColorLocation,
       thirdColorArray
     );
-    createSortableArray();
+    sortColors();
   } else if (splitComplimentaryColor) {
     const primaryColorLocation = 0;
     const numberOfSecondaryAccents = 1;
@@ -445,7 +462,7 @@ function generateColorScheme() {
       primaryColorLocation,
       thirdColorArray
     );
-    createSortableArray();
+    sortColors();
   } else if (triadicColor) {
     const primaryColorLocation = 0;
     const numberOfSecondaryAccents = 1;
@@ -479,7 +496,7 @@ function generateColorScheme() {
       primaryColorLocation,
       thirdColorArray
     );
-    createSortableArray();
+    sortColors();
   } else if (tetradicColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 1;
@@ -518,7 +535,7 @@ function generateColorScheme() {
     secondColor = [HSLToHex(h1Array)];
     thirdColor = [HSLToHex(h2Array)];
     fourthColor = [HSLToHex(h3Array)];
-    createSortableArray();
+    sortColors();
   } else {
     console.log("Did not understand");
   }

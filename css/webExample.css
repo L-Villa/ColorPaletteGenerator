@@ -147,9 +147,7 @@ body {
 
 /*---------------------------------- Nav Bar ----------------------------------*/
 nav {
-  /* background: var(--skyBlue); */
   background: var(--primaryColor);
-  /* background: var(--darkBlue); */
   width: 100%;
   height: 7vh;
   animation: slideDown 1.5s;
@@ -201,6 +199,7 @@ nav {
   border-radius: 5px;
   background: var(--primaryColor);
   box-shadow: 3px 3px 10px var(--boxShadow1), -3px -3px 10px var(--boxShadow2);
+  cursor: pointer;
 }
 
 .nav-links li:hover {
@@ -228,7 +227,8 @@ nav {
   padding: 6px;
   z-index: 2;
   font-size: 4vh;
-  color: var(--accentColor)
+  color: var(--accentColor);
+  cursor: pointer;
 }
 
 .nav-logo-image:hover,
@@ -240,7 +240,7 @@ nav {
 #landingContainer {
   position: relative;
   width: 100%;
-  height: 40vh;
+  height: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -269,6 +269,45 @@ nav {
   -ms-animation: fadein 3s; /* Internet Explorer */
   -o-animation: fadein 3s; /* Opera < 12.1 */
   animation: fadein 3s;
+}
+
+
+
+.svgContainer {
+  background: white;
+}
+
+.svgContainer svg {
+  position: absolute;
+  width: 40vw;
+  fill: blue !important;
+}
+
+#path0 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  /* left: 50%; */
+  fill: rgb(0, 0, 0) !important;
+  position: relative;
+}
+#path2 {
+  position: absolute;
+  top: 24.35%;
+  left: 0px;
+  fill: rgb(207, 73, 32) !important;
+}
+#path3 {
+  position: absolute;
+  top: 24.35%;
+  left: 0px;
+  fill: rgb(238, 180, 114) !important;
+}
+#path4 {
+  position: absolute;
+  top: 24%;
+  left: 0px;
+  fill: rgb(145, 95, 49) !important;
 }
 
 
@@ -416,6 +455,7 @@ nav {
   text-align: center;
   padding: 5% 0% 0% 0%;
   font-size: 21px;
+  font-weight: 600;
   color: var(--primaryColor);
   text-transform: uppercase;
 }
@@ -430,7 +470,7 @@ nav {
 
 .cardContainer {
   display: flex;
-  padding: 50px 0px;
+  padding: 25px 0px;
   margin: auto;
   flex-wrap: wrap;
   max-width: 65%;
@@ -450,16 +490,16 @@ nav {
   cursor: pointer;
   text-transform: none;
   text-align: center;
-  color: var(--accentColor);
 }
 
 .card:hover {
   box-shadow: inset -6px -6px 10px rgba(255, 255, 255, 1),
-    inset 6px 6px 20px rgba(0, 0, 0, 0.25);
+  inset 6px 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .imgBx {
-  font-size: 10rem;
+  color: var(--accentColor3);
+  font-size: 7rem;
 }
 
 .imgBx img {
@@ -482,8 +522,7 @@ nav {
   letter-spacing: 2px;
 }
 .contentBx p {
-  color: var(--accentColor3);
-  /* color: rgb(141, 141, 141); */
+  color: var(--accentColor2);
   font-family: var(--secondary-font);
   font-size: 16px;
 }
