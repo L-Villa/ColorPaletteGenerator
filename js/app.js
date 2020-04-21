@@ -20,7 +20,7 @@ let savedPalettes = [];
 //event listeners
 //todo: remove the generate button. Only use space to generate so that it doesnt mess things up
 generateBtn.addEventListener("click", generateColorScheme);
-undoBtn.addEventListener("click", generateColorScheme);
+undoBtn.addEventListener("click", undoGenerate);
 redoBtn.addEventListener("click", generateColorScheme);
 // window.addEventListener("keydown", function (e) {
 //   if (e.keyCode === 32) {
@@ -258,6 +258,43 @@ function generateAccent(NoAccents, colorLocation, array) {
   }
 }
 
+// !move these arrays up top later?
+generatedColors = [];
+undoColors = [];
+redoColors = [];
+// colorDivs.forEach((div, index) => {
+//   const hexText = div.children[0];
+//   //add color to array
+//   //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
+//   if (div.classList.contains("locked")) {
+//     initialColors.push(hexText.innerText);
+//     return;
+//   } else {
+//     initialColors.push(finalColors[index]);
+//   }
+//   //add color to bg
+//   div.style.backgroundColor = finalColors[index];
+//   hexText.innerText = finalColors[index];
+//   //check for contrast
+//   checkContrast(finalColors[index], hexText);
+//   //initial colorize sliders
+//   const color = chroma(finalColors[index]);
+//   const sliders = div.querySelectorAll(".sliders input");
+//   const hue = sliders[0];
+//   const brightness = sliders[1];
+//   const saturation = sliders[2];
+//   colorizeSliders(color, hue, brightness, saturation);
+// });
+// //reset inputs
+// resetInputs();
+// //check for button contrast
+// adjustButton.forEach((button, index) => {
+//   checkContrast(initialColors[index], button);
+//   checkContrast(initialColors[index], lockButton[index]);
+// });
+
+// generatedColors = [];
+
 function ColorHSL(hue, saturation, lightness, luminance) {
   this.hue = hue;
   this.saturation = saturation;
@@ -300,10 +337,10 @@ function sortColors() {
     primaryColors.sort((a, b) => a.luminance - b.luminance);
     secondaryColors.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...primaryColors, ...secondaryColors];
-    console.log("comp is not issue");
+    // console.log("comp is not issue");
   } else if (monochromaticColor) {
     sortTheseColors.sort((a, b) => a.luminance - b.luminance);
-    console.log("mono is not issue");
+    // console.log("mono is not issue");
   } else if (analogousColor) {
     anaSort = [...sortTheseColors];
     firstColor = [anaSort[0], anaSort[3]];
@@ -312,7 +349,7 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    console.log("analagous is not issue");
+    // console.log("analagous is not issue");
   } else if (splitComplimentaryColor) {
     splitSort = [...sortTheseColors];
     firstColor = [splitSort[1], splitSort[3]];
@@ -321,7 +358,7 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    console.log("split is not issue");
+    // console.log("split is not issue");
   } else if (triadicColor) {
     triSort = [...sortTheseColors];
     firstColor = [triSort[1], triSort[3]];
@@ -330,10 +367,10 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    console.log("triadic is not issue");
+    // console.log("triadic is not issue");
   } else if (tetradicColor) {
     //tetradic does not require the colors to be sorted
-    console.log("tetra is not issue");
+    // console.log("tetra is not issue");
   } // I should add an else statement
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const hexColor = chroma
@@ -344,13 +381,132 @@ function sortColors() {
       )
       .hex();
     sortedHex.push(hexColor);
+    generatedColors.push(sortedHex[i]);
+
+    //!Try to pass all the colors and then just set limit on how far back to go
+    undoColors.push(sortedHex[i]);
   }
   finalColors = [...sortedHex];
+  // undoColors = [...generatedColors];
+  console.log(generatedColors.length, undoColors.length);
   sortableColors = [];
   sortedHex = [];
 }
 
+let undoFunctionStarts = 0;
+let undoButtonCount = 0;
+function undoGenerate() {
+  undoButtonCount++;
+  const mu = generateButtonCount;
+  console.log(mu);
+  console.log(undoButtonCount);
+  let amountToSplice;
+  if (undoButtonCount === 1) {
+    testIndex = undoColors.length - 5;
+    testArray = undoColors.splice(testIndex, 5);
+    console.log(testArray);
+    console.log(undoColors);
+    undoFunctionStarts++;
+    // generateButtonCount = 0;
+  }
+  console.log(generatedColors.length, undoColors.length);
+  let totalNoOfColors = undoColors.length;
+  finalColors = [];
+  initialColors = [];
+  console.log(undoButtonCount < mu - 1);
+  // if (totalNoOfColors >= 5) {
+  // if (undoButtonCount < mu - 1) {
+  if (undoColors.length > 6) {
+    // pastIndex = totalNoOfColors - 10;
+    pastIndex = totalNoOfColors - 5;
+    for (i = pastIndex; i < totalNoOfColors; i++) {
+      finalColors.push(undoColors[i]);
+      redoColors.push(undoColors[i]);
+    }
+    // undoColors.splice(pastIndex, 5);
+    colorDivs.forEach((div, index) => {
+      const hexText = div.children[0];
+      //add color to array
+      //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+      }
+      //add color to bg
+      div.style.backgroundColor = initialColors[index];
+      hexText.innerText = initialColors[index];
+      //check for contrast
+      checkContrast(initialColors[index], hexText);
+      //initial colorize sliders
+      const color = chroma(initialColors[index]);
+      const sliders = div.querySelectorAll(".sliders input");
+      const hue = sliders[0];
+      const brightness = sliders[1];
+      const saturation = sliders[2];
+      colorizeSliders(color, hue, brightness, saturation);
+    });
+    //reset inputs
+    resetInputs();
+    //check for button contrast
+    adjustButton.forEach((button, index) => {
+      checkContrast(initialColors[index], button);
+      checkContrast(initialColors[index], lockButton[index]);
+    });
+    for (let i = 0; i < 5; i++) {
+      undoColors.pop();
+    }
+    // } else if (undoButtonCount == mu - 1) {
+  } else if (undoColors.length < 6) {
+    // pastIndex = totalNoOfColors - 10;
+    pastIndex = totalNoOfColors - 5;
+    for (i = pastIndex; i < totalNoOfColors; i++) {
+      finalColors.push(undoColors[i]);
+      redoColors.push(undoColors[i]);
+    }
+    //!Add toggle active for the undo button
+    //Todo: turn this loop into a function
+    undoColors = [...finalColors];
+    // undoColors.splice(pastIndex, 5);
+    colorDivs.forEach((div, index) => {
+      const hexText = div.children[0];
+      //add color to array
+      //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+      }
+      //add color to bg
+      div.style.backgroundColor = initialColors[index];
+      hexText.innerText = initialColors[index];
+      //check for contrast
+      checkContrast(initialColors[index], hexText);
+      //initial colorize sliders
+      const color = chroma(initialColors[index]);
+      const sliders = div.querySelectorAll(".sliders input");
+      const hue = sliders[0];
+      const brightness = sliders[1];
+      const saturation = sliders[2];
+      colorizeSliders(color, hue, brightness, saturation);
+    });
+    //reset inputs
+    resetInputs();
+    //check for button contrast
+    adjustButton.forEach((button, index) => {
+      checkContrast(initialColors[index], button);
+      checkContrast(initialColors[index], lockButton[index]);
+    });
+  }
+}
+
+let generateButtonCount = 0;
 function generateColorScheme() {
+  generateButtonCount++;
+  undoButtonCount = 0;
+  console.log(generateButtonCount);
   // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
   mainColors = [];
@@ -593,12 +749,12 @@ function generateColorScheme() {
       initialColors.push(finalColors[index]);
     }
     //add color to bg
-    div.style.backgroundColor = finalColors[index];
-    hexText.innerText = finalColors[index];
+    div.style.backgroundColor = initialColors[index];
+    hexText.innerText = initialColors[index];
     //check for contrast
-    checkContrast(finalColors[index], hexText);
+    checkContrast(initialColors[index], hexText);
     //initial colorize sliders
-    const color = chroma(finalColors[index]);
+    const color = chroma(initialColors[index]);
     const sliders = div.querySelectorAll(".sliders input");
     const hue = sliders[0];
     const brightness = sliders[1];
