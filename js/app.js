@@ -2,6 +2,8 @@
 const root = document.documentElement;
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
+const undoBtn = document.querySelector(".undo");
+const redoBtn = document.querySelector(".redo");
 const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll(".color h2");
 const popup = document.querySelector(".copy-container");
@@ -18,12 +20,14 @@ let savedPalettes = [];
 //event listeners
 //todo: remove the generate button. Only use space to generate so that it doesnt mess things up
 generateBtn.addEventListener("click", generateColorScheme);
-window.addEventListener("keydown", function (e) {
-  if (e.keyCode === 32) {
-    generateColorScheme();
-    e.preventDefault();
-  }
-});
+undoBtn.addEventListener("click", generateColorScheme);
+redoBtn.addEventListener("click", generateColorScheme);
+// window.addEventListener("keydown", function (e) {
+//   if (e.keyCode === 32) {
+//     generateColorScheme();
+//     e.preventDefault();
+//   }
+// });
 sliders.forEach((slider) => {
   slider.addEventListener("input", hslControls);
 });
@@ -65,7 +69,6 @@ closeAdjustments.forEach((button, index) => {
 // })
 
 // Functions ------------------------------------------------
-//!So i can just generate random colors straight to hsl. Only convert to Hex for the HexText?
 function generateRandomColorHSL() {
   const H = chroma.random().hsl();
   return H;
@@ -84,6 +87,7 @@ function hexToHSL(H) {
   return hslArray;
 }
 
+//todo: change this functions name (hslArrayToHSL?)
 function HSLToHex(hslArray) {
   const hexColor = chroma.hsl(hslArray[0], hslArray[1], hslArray[2]).hex();
   // const hexColor = chroma.hsl(hslArray[0], hslArray[1], hslArray[2]).hsl();
@@ -105,7 +109,7 @@ function randomColorSchemeType() {
   splitComplimentaryColor = false;
   triadicColor = false;
   tetradicColor = false;
-  switch (3) {
+  switch (randNo) {
     case 1:
       complimentaryColor = true;
       break;
@@ -145,6 +149,8 @@ function setWebTemplateColors() {
   root.style.setProperty("--boxShadow1", boxShadowColors[0]);
   root.style.setProperty("--boxShadow2", boxShadowColors[1]);
 
+  //todo: set if statements (if color to light, darken or if not enough contrast, increase it. etc.)
+  //todo: go set the hover color to an accent color variable?
   if (complimentaryColor) {
     root.style.setProperty("--primaryColor", finalColors[0]);
     root.style.setProperty("--secondaryColor", finalColors[4]);
@@ -158,6 +164,24 @@ function setWebTemplateColors() {
     root.style.setProperty("--accentColor2", finalColors[2]);
     root.style.setProperty("--accentColor3", finalColors[2]);
   } else if (analogousColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[4]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[3]);
+    root.style.setProperty("--accentColor3", finalColors[0]);
+  } else if (splitComplimentaryColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[4]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[3]);
+    root.style.setProperty("--accentColor3", finalColors[0]);
+  } else if (triadicColor) {
+    root.style.setProperty("--primaryColor", finalColors[0]);
+    root.style.setProperty("--secondaryColor", finalColors[4]);
+    root.style.setProperty("--accentColor", finalColors[3]);
+    root.style.setProperty("--accentColor2", finalColors[3]);
+    root.style.setProperty("--accentColor3", finalColors[0]);
+  } else if (tetradicColor) {
     root.style.setProperty("--primaryColor", finalColors[0]);
     root.style.setProperty("--secondaryColor", finalColors[4]);
     root.style.setProperty("--accentColor", finalColors[3]);

@@ -58,13 +58,17 @@ svg {
   bottom: 0%;
   background: rgb(255, 255, 255);
   opacity: 0;
-  padding: 1rem;
+  padding: 2rem 1rem;
   width: 80%;
   border-top-right-radius: 1rem;
   border-top-left-radius: 1rem;
   pointer-events: none;
   transform: translateY(100px);
   transition: all 0.5s ease-in-out;
+}
+
+.sliders span {
+  color: rgb(83, 83, 83);
 }
 
 .sliders.active {
@@ -96,30 +100,44 @@ svg {
   transition: all 0.2s ease-in-out;
 }
 
+.panelContainer {
+  display: flex;
+  border-top: solid rgb(212, 212, 212) 0.1rem;
+  border-bottom: solid rgb(212, 212, 212) 0.1rem;
+}
+
 .panel {
   display: flex;
+  position: relative;
+  left: 50%;
   align-items: center;
   justify-content: space-evenly;
-  height: 10vh;
-  background: rgb(230, 230, 230);
+  height: 5vh;
+  background: rgb(255, 255, 255);
 }
-.panel {
+
+.generateContainer,
+.undoRedoContainer,
+.saveLibraryContainer {
+  border-right: solid rgb(192, 192, 192);
+  border-width: 0.1rem;
   display: flex;
+  flex-direction: row;
+  padding: 0rem 1rem;
 }
 
 .panel button {
   font-size: 1.2rem;
-  margin: 1rem;
-  padding: 1rem 2rem;
-  background: rgb(31, 33, 63);
+  background: none;
+  padding: 0rem 0.6rem;
   border: none;
-  color: white;
+  color: rgb(0, 0, 0);
   cursor: pointer;
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
 }
 
-.panel p {
-  font-size: 1.2rem;
+.panel button:hover {
+  color: rgb(155, 154, 154);
 }
 
 .library-panel,
@@ -129,6 +147,7 @@ svg {
   flex-direction: column;
   align-items: center;
 }
+
 
 .color:hover .adjust,
 .color:hover .lock {
@@ -146,9 +165,9 @@ svg {
 }
 
 /* !For now there are no pointer events on lock because it messes something up */
-.lock {
+/* .lock {
   pointer-events: none;
-}
+} */
 
 .color .adjust:hover,
 .color .lock:hover {
@@ -168,6 +187,32 @@ input[type="range"] {
   width: 100%;
   position: relative;
   border-radius: 1rem;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+}
+
+input[type=range]::-moz-range-thumb {
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+input[type=range]::-ms-thumb {
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background: #ffffff;
   cursor: pointer;
 }
 
