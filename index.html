@@ -12,22 +12,6 @@
     <title>Newtones</title>
   </head>
   <body>
-    <div class="panelContainer">
-      <div class="panel">
-        <div class="library-panel">
-          <button class="library"><i class="fas fa-book-open"></i></button>
-          <p>Library</p>
-        </div>
-        <div class="generate-panel">
-          <button class="generate"><i class="fas fa-sync"></i></button>
-          <p>Generate</p>
-        </div>
-        <div class="save-panel">
-          <button class="save"><i class="fas fa-save"></i></button>
-          <p>Save</p>
-        </div>
-      </div>
-    </div>
     <div class="colors">
       <div class="color">
         <h2>
@@ -233,14 +217,39 @@
           />
           <span>Saturation</span>
           <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            name="saturation"
-            class="sat-input"
-            data-sat="4"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          name="saturation"
+          class="sat-input"
+          data-sat="4"
           />
+        </div>
+      </div>
+    </div>
+    <div class="panelContainer">
+      <div class="panel">
+        <div class="generateContainer">
+          <div class="generate-panel">
+            <button class="generate"><i class="fas fa-sync"></i></button>
+          </div>
+        </div>
+        <div class="undoRedoContainer">
+          <div class="undo-panel">
+            <button class="undo"><i class="fas fa-undo"></i></button>
+          </div>
+          <div class="redo-panel">
+            <button class="redo"><i class="fas fa-redo"></i></button>
+          </div>
+        </div>
+        <div class="saveLibraryContainer">
+          <div class="save-panel">
+            <button class="save"><i class="fas fa-save"></i></button>
+          </div>
+          <div class="library-panel">
+            <button class="library"><i class="fas fa-book"></i></button>
+          </div>
         </div>
       </div>
     </div>
