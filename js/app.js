@@ -368,10 +368,11 @@ function sortColors() {
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
     // console.log("triadic is not issue");
-  } else if (tetradicColor) {
-    //tetradic does not require the colors to be sorted
-    // console.log("tetra is not issue");
-  } // I should add an else statement
+  }
+  // else if (tetradicColor) {
+  //tetradic does not require the colors to be sorted
+  // console.log("tetra is not issue");
+  // } // I should add an else statement
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const hexColor = chroma
       .hsl(
@@ -393,37 +394,23 @@ function sortColors() {
   sortedHex = [];
 }
 
-let undoFunctionStarts = 0;
 let undoButtonCount = 0;
 function undoGenerate() {
+  //todo: this function has to toggle the redo button
   undoButtonCount++;
-  const mu = generateButtonCount;
-  console.log(mu);
-  console.log(undoButtonCount);
-  let amountToSplice;
   if (undoButtonCount === 1) {
     testIndex = undoColors.length - 5;
     testArray = undoColors.splice(testIndex, 5);
-    console.log(testArray);
-    console.log(undoColors);
-    undoFunctionStarts++;
-    // generateButtonCount = 0;
   }
-  console.log(generatedColors.length, undoColors.length);
   let totalNoOfColors = undoColors.length;
   finalColors = [];
   initialColors = [];
-  console.log(undoButtonCount < mu - 1);
-  // if (totalNoOfColors >= 5) {
-  // if (undoButtonCount < mu - 1) {
   if (undoColors.length > 6) {
-    // pastIndex = totalNoOfColors - 10;
     pastIndex = totalNoOfColors - 5;
     for (i = pastIndex; i < totalNoOfColors; i++) {
       finalColors.push(undoColors[i]);
       redoColors.push(undoColors[i]);
     }
-    // undoColors.splice(pastIndex, 5);
     colorDivs.forEach((div, index) => {
       const hexText = div.children[0];
       //add color to array
@@ -468,7 +455,6 @@ function undoGenerate() {
     //!Add toggle active for the undo button
     //Todo: turn this loop into a function
     undoColors = [...finalColors];
-    // undoColors.splice(pastIndex, 5);
     colorDivs.forEach((div, index) => {
       const hexText = div.children[0];
       //add color to array
@@ -502,11 +488,9 @@ function undoGenerate() {
   }
 }
 
-let generateButtonCount = 0;
 function generateColorScheme() {
-  generateButtonCount++;
   undoButtonCount = 0;
-  console.log(generateButtonCount);
+  //todo: this function has to toggle the undo button
   // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
   mainColors = [];
