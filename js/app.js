@@ -68,10 +68,6 @@ closeAdjustments.forEach((button, index) => {
 //   })
 // })
 
-function testFunc2() {
-  console.log("testtest");
-}
-
 // Functions ------------------------------------------------
 function generateRandomColorHSL() {
   const H = chroma.random().hsl();
