@@ -3,7 +3,9 @@ const root = document.documentElement;
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
 const undoBtn = document.querySelector(".undo");
+const undoPanel = document.querySelector(".undo-panel");
 const redoBtn = document.querySelector(".redo");
+const redoPanel = document.querySelector(".redo-panel");
 const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll(".color h2");
 const popup = document.querySelector(".copy-container");
@@ -21,7 +23,7 @@ let savedPalettes = [];
 //todo: remove the generate button. Only use space to generate so that it doesnt mess things up
 generateBtn.addEventListener("click", generateColorScheme);
 undoBtn.addEventListener("click", undoGenerate);
-redoBtn.addEventListener("click", generateColorScheme);
+redoBtn.addEventListener("click", redoGenerate);
 // window.addEventListener("keydown", function (e) {
 //   if (e.keyCode === 32) {
 //     generateColorScheme();
@@ -383,24 +385,32 @@ function sortColors() {
       .hex();
     sortedHex.push(hexColor);
     generatedColors.push(sortedHex[i]);
-
-    //!Try to pass all the colors and then just set limit on how far back to go
     undoColors.push(sortedHex[i]);
+    // redoColors.push(sortedHex[i]);
   }
   finalColors = [...sortedHex];
-  // undoColors = [...generatedColors];
-  console.log(generatedColors.length, undoColors.length);
+  console.log(generatedColors.length, undoColors.length, redoColors.length);
   sortableColors = [];
   sortedHex = [];
 }
 
 let undoButtonCount = 0;
 function undoGenerate() {
+  redoBtn.classList.add("active");
   //todo: this function has to toggle the redo button
   undoButtonCount++;
+  console.log(generatedColors.length, undoColors.length, redoColors.length);
   if (undoButtonCount === 1) {
-    testIndex = undoColors.length - 5;
-    testArray = undoColors.splice(testIndex, 5);
+    removeLastFiveIndex = undoColors.length - 5;
+    firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
+    firstRemovalCopy = [...firstRemoval];
+    firstRemovalCopyReversed = firstRemovalCopy.reverse();
+    for (let i = 0; i < 5; i++) {
+      redoColors.unshift(firstRemovalCopyReversed[i]);
+    }
+    generateButtonCount = 1;
+    redoButtonCount = 0;
+    // redoColors.push(firstRemoval);
   }
   let totalNoOfColors = undoColors.length;
   finalColors = [];
@@ -409,7 +419,7 @@ function undoGenerate() {
     pastIndex = totalNoOfColors - 5;
     for (i = pastIndex; i < totalNoOfColors; i++) {
       finalColors.push(undoColors[i]);
-      redoColors.push(undoColors[i]);
+      // redoColors.push(undoColors[i]);
     }
     colorDivs.forEach((div, index) => {
       const hexText = div.children[0];
@@ -441,9 +451,17 @@ function undoGenerate() {
       checkContrast(initialColors[index], button);
       checkContrast(initialColors[index], lockButton[index]);
     });
+    tempColorStorage = [];
+    console.log(tempColorStorage);
     for (let i = 0; i < 5; i++) {
-      undoColors.pop();
+      popRemoval = undoColors.pop();
+      tempColorStorage.push(popRemoval);
     }
+    // tempColorStorageReversed = tempColorStorage.reverse();
+    for (let i = 0; i < 5; i++) {
+      redoColors.unshift(tempColorStorage[i]);
+    }
+    console.log(redoColors);
     // } else if (undoButtonCount == mu - 1) {
   } else if (undoColors.length < 6) {
     // pastIndex = totalNoOfColors - 10;
@@ -485,12 +503,121 @@ function undoGenerate() {
       checkContrast(initialColors[index], button);
       checkContrast(initialColors[index], lockButton[index]);
     });
+    undoBtn.classList.remove("active");
   }
 }
 
+let redoButtonCount = 0;
+function redoGenerate() {
+  //todo: this function has to toggle the redo button
+  redoButtonCount++;
+  console.log(generatedColors.length, undoColors.length, redoColors.length);
+  if (redoButtonCount === 1) {
+    testIndex = 0;
+    testArray = redoColors.splice(testIndex, 5);
+    for (let i = 0; i < 5; i++) {
+      undoColors.push(testArray[i]);
+    }
+    undoButtonCount = 0;
+  }
+  let totalNoOfColors = redoColors.length;
+  finalColors = [];
+  initialColors = [];
+  if (redoColors.length > 6) {
+    pastIndex = totalNoOfColors - 5;
+    for (i = pastIndex; i < totalNoOfColors; i++) {
+      finalColors.push(redoColors[i]);
+      undoColors.push(redoColors[i]);
+    }
+    colorDivs.forEach((div, index) => {
+      const hexText = div.children[0];
+      //add color to array
+      //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+      }
+      //add color to bg
+      div.style.backgroundColor = initialColors[index];
+      hexText.innerText = initialColors[index];
+      //check for contrast
+      checkContrast(initialColors[index], hexText);
+      //initial colorize sliders
+      const color = chroma(initialColors[index]);
+      const sliders = div.querySelectorAll(".sliders input");
+      const hue = sliders[0];
+      const brightness = sliders[1];
+      const saturation = sliders[2];
+      colorizeSliders(color, hue, brightness, saturation);
+    });
+    //reset inputs
+    resetInputs();
+    //check for button contrast
+    adjustButton.forEach((button, index) => {
+      checkContrast(initialColors[index], button);
+      checkContrast(initialColors[index], lockButton[index]);
+    });
+    for (let i = 0; i < 5; i++) {
+      redoColors.pop();
+    }
+    // } else if (redoButtonCount == mu - 1) {
+  } else if (redoColors.length < 6) {
+    // pastIndex = totalNoOfColors - 10;
+    pastIndex = totalNoOfColors - 5;
+    for (i = pastIndex; i < totalNoOfColors; i++) {
+      finalColors.push(redoColors[i]);
+      undoColors.push(redoColors[i]);
+    }
+    //!Add toggle active for the redo button
+    //Todo: turn this loop into a function
+    redoColors = [...finalColors];
+    colorDivs.forEach((div, index) => {
+      const hexText = div.children[0];
+      //add color to array
+      //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+      }
+      //add color to bg
+      div.style.backgroundColor = initialColors[index];
+      hexText.innerText = initialColors[index];
+      //check for contrast
+      checkContrast(initialColors[index], hexText);
+      //initial colorize sliders
+      const color = chroma(initialColors[index]);
+      const sliders = div.querySelectorAll(".sliders input");
+      const hue = sliders[0];
+      const brightness = sliders[1];
+      const saturation = sliders[2];
+      colorizeSliders(color, hue, brightness, saturation);
+    });
+    //reset inputs
+    resetInputs();
+    //check for button contrast
+    adjustButton.forEach((button, index) => {
+      checkContrast(initialColors[index], button);
+      checkContrast(initialColors[index], lockButton[index]);
+    });
+    redoBtn.classList.remove("active");
+  }
+}
+
+generateButtonCount = 0;
 function generateColorScheme() {
+  generateButtonCount++;
   undoButtonCount = 0;
+  redoButtonCount = 0;
   //todo: this function has to toggle the undo button
+  if (generateButtonCount == 2) {
+    undoBtn.classList.add("active");
+  } else if (generateButtonCount == 0 && undoPanel.children[0].classList.contains("active")) {
+    undoPanel.children[0].classList.remove("active");
+  }
   // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
   mainColors = [];
