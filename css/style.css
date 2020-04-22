@@ -103,12 +103,12 @@ svg {
   display: flex;
   border-top: solid rgb(212, 212, 212) 0.1rem;
   border-bottom: solid rgb(212, 212, 212) 0.1rem;
+  justify-content: center;
 }
 
 .panel {
   display: flex;
   position: relative;
-  left: 50%;
   align-items: center;
   justify-content: space-evenly;
   height: 5vh;
@@ -159,7 +159,6 @@ svg {
   align-items: center;
 }
 
-
 .color:hover .adjust,
 .color:hover .lock {
   opacity: 0.4;
@@ -201,7 +200,7 @@ input[type="range"] {
   cursor: pointer;
 }
 
-input[type=range]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 24px;
   width: 24px;
@@ -211,7 +210,7 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: -14px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
 }
 
-input[type=range]::-moz-range-thumb {
+input[type="range"]::-moz-range-thumb {
   height: 24px;
   width: 24px;
   border-radius: 12px;
@@ -219,7 +218,7 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
 }
 
-input[type=range]::-ms-thumb {
+input[type="range"]::-ms-thumb {
   height: 24px;
   width: 24px;
   border-radius: 12px;
