@@ -135,10 +135,6 @@ svg {
   /* border-radius: 1rem; */
 }
 
-.panel button:hover {
-  color: rgb(86, 198, 233);
-}
-
 .undo-panel button,
 .redo-panel button {
   color: rgb(218, 218, 218);
@@ -149,6 +145,10 @@ svg {
 .redo-panel button.active {
   color: black;
   pointer-events: all;
+}
+
+.panel button:hover {
+  color: rgb(86, 198, 233);
 }
 
 .library-panel,
