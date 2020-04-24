@@ -393,6 +393,7 @@ function sortColors() {
   sortedHex = [];
 }
 
+todaysTest = [];
 function updateUI() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
@@ -400,9 +401,11 @@ function updateUI() {
     //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
     if (div.classList.contains("locked")) {
       initialColors.push(hexText.innerText);
+      todaysTest.push(hexText.innerText);
       return;
     } else {
       initialColors.push(finalColors[index]);
+      todaysTest.push(0);
     }
     //add color to bg
     div.style.backgroundColor = initialColors[index];
@@ -424,6 +427,8 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
+  console.log("todays", todaysTest);
+  console.log(initialColors);
 }
 
 let undoButtonCount = 0;
@@ -491,19 +496,20 @@ function redoGenerate() {
 generateButtonCount = 0;
 function generateColorScheme() {
   generateButtonCount++;
-  undoButtonCount = 0;
-  redoButtonCount = 0;
-  redoColors = [];
-  redoBtn.classList.remove("active");
-  if (generateButtonCount == 2) {
-    undoBtn.classList.add("active");
-  }
-  // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   initialColors = [];
   mainColors = [];
   accentColors = [];
   accentColors2 = [];
   colorLuminance = [];
+  redoColors = [];
+  todaysTest = [];
+  undoButtonCount = 0;
+  redoButtonCount = 0;
+  redoBtn.classList.remove("active");
+  if (generateButtonCount == 2) {
+    undoBtn.classList.add("active");
+  }
+  // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   randomColorSchemeType();
   mainColorArray = generateRandomColorHSL();
   let h1;
@@ -529,6 +535,7 @@ function generateColorScheme() {
   thirdColor = [];
   fourthColor = [];
   accentColors = [];
+  // todo: color choice here if locked value
   if (complimentaryColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 2;
