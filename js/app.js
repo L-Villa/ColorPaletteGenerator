@@ -85,7 +85,8 @@ function hexToHSL(H) {
   const h = HSLColor[0];
   const s = HSLColor[1];
   const l = HSLColor[2];
-  const hslArray = [h, s, l];
+  const a = HSLColor[3];
+  const hslArray = [h, s, l, a];
   return hslArray;
 }
 
@@ -230,11 +231,13 @@ function generateAccent(NoAccents, colorLocation, array) {
   const numberOfAccents = NoAccents;
   for (i = 0; i < numberOfAccents; i++) {
     chooseColor = colorLocation;
+    RandRandNo = Math.random() * 3;
     saturationRandNo = Math.random() * 3;
     darkenRandNo = Math.random() * 4;
     arrayHex = HSLToHex(array);
     accentColor = arrayHex;
     const lum = chroma(accentColor).luminance();
+    //todo: dont always change both saturation and brightness
     if (lum >= 0.8 && lum < 1) {
       accentColorSaturation = chroma(accentColor)
         .desaturate(saturationRandNo)
@@ -322,6 +325,7 @@ function sortColors() {
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const lum = chroma(sortTheseHexColors[i]).luminance();
     const hexConvertedToHSL = hexToHSL(sortTheseHexColors[i]);
+    // const hexConvertedToHSL = chroma(sortTheseHexColors[i]).hsl();
     sortableColors.push(
       new ColorHSL(
         hexConvertedToHSL[0],
@@ -384,28 +388,46 @@ function sortColors() {
       )
       .hex();
     sortedHex.push(hexColor);
-    generatedColors.push(sortedHex[i]);
-    undoColors.push(sortedHex[i]);
+    // if (generateButtonCount === 2) {
+    //   undoColors.push(sortedHex[i]);
+    // }
+    // generatedColors.push(sortedHex[i]);
+    // undoColors.push(sortedHex[i]);
     // redoColors.push(sortedHex[i]);
   }
   finalColors = [...sortedHex];
+
+  // remove primary colors from final colors
   sortableColors = [];
   sortedHex = [];
 }
 
-todaysTest = [];
+lockedColors = [];
 function updateUI() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
     //add color to array
     //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
-    if (div.classList.contains("locked")) {
-      initialColors.push(hexText.innerText);
-      todaysTest.push(hexText.innerText);
-      return;
+    if (checkDis.length === 0) {
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        undoColors.push(hexText.innerText);
+        lockedColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+        undoColors.push(finalColors[index]);
+        lockedColors.push(0);
+      }
     } else {
-      initialColors.push(finalColors[index]);
-      todaysTest.push(0);
+      if (div.classList.contains("locked")) {
+        initialColors.push(hexText.innerText);
+        lockedColors.push(hexText.innerText);
+        return;
+      } else {
+        initialColors.push(finalColors[index]);
+        lockedColors.push(0);
+      }
     }
     //add color to bg
     div.style.backgroundColor = initialColors[index];
@@ -427,14 +449,20 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
-  console.log("todays", todaysTest);
+  findPrimaryColors();
+  console.log("todays", lockedColors);
   console.log(initialColors);
+  console.log('undolength', undoColors.length);
+
 }
 
+checkDis = [];
 let undoButtonCount = 0;
 function undoGenerate() {
+  checkDis[0] = 'undone';
   redoBtn.classList.add("active");
   undoButtonCount++;
+  console.log('undolength init', undoColors.length);
   if (undoButtonCount === 1) {
     removeLastFiveIndex = undoColors.length - 5;
     firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
@@ -462,10 +490,13 @@ function undoGenerate() {
   if (undoColors.length === 0) {
     undoBtn.classList.remove("active");
   }
+  console.log('undolength fin', undoColors.length);
+  checkDis = [];
 }
 
 let redoButtonCount = 0;
 function redoGenerate() {
+  checkDis[0] = 'undone';
   redoButtonCount++;
   if (redoButtonCount === 1) {
     testArray = redoColors.splice(0, 5);
@@ -491,8 +522,44 @@ function redoGenerate() {
   if (!undoBtn.classList.contains("active")) {
     undoBtn.classList.add("active");
   }
+  checkDis = [];
 }
 
+//todo: find a better place to run this function
+previouslyLockedColors = [NaN, NaN, NaN, NaN, NaN];
+lockedColorsObjects = [];
+testtesttest = [];
+console.log("initialPrev", previouslyLockedColors);
+function findPrimaryColors() {
+  console.log(lockedColors);
+  for (let i = 0; i < 5; i++) {
+    if (lockedColors[i] != 0) {
+      previouslyLockedColors[i] = lockedColors[i];
+      //get luminance
+      const lum = chroma(previouslyLockedColors[i]).luminance();
+      //convert to hsl
+      const hsl = chroma(previouslyLockedColors[i]).hsl();
+      //push new object to an array
+      lockedColorsObjects.push(new ColorHSL(hsl[0], hsl[1], hsl[2], lum));
+    } else {
+      previouslyLockedColors[i] = "NaN";
+    }
+  }
+  testtesttest = [...previouslyLockedColors];
+  mainColorArray = [];
+  // if (lockedColorsObjects.length > 0) {
+  //   for (let i = 0; i <lockedColorsObjects.length; i++) {
+  //     mainColorArray = [lockedColorsObjects[i].hue, lockedColorsObjects[i].saturation, lockedColorsObjects[i].lightness]
+  //   }
+  // } else {
+  //   mainColorArray = generateRandomColorHSL();
+  // }
+  // lockedColorsObjects = [];
+  console.log("prev", previouslyLockedColors);
+  lockedColors = [];
+}
+
+mainColorArray = [];
 generateButtonCount = 0;
 function generateColorScheme() {
   generateButtonCount++;
@@ -502,16 +569,31 @@ function generateColorScheme() {
   accentColors2 = [];
   colorLuminance = [];
   redoColors = [];
-  todaysTest = [];
+  checkDis = [];
   undoButtonCount = 0;
   redoButtonCount = 0;
   redoBtn.classList.remove("active");
+  // if (mainColorArray.length === 0) {
+  //   mainColorArray = generateRandomColorHSL();
+  // }
   if (generateButtonCount == 2) {
     undoBtn.classList.add("active");
   }
-  // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   randomColorSchemeType();
-  mainColorArray = generateRandomColorHSL();
+  mainColorArray = [];
+  if (lockedColorsObjects.length > 0) {
+    for (let i = 0; i < lockedColorsObjects.length; i++) {
+      mainColorArray = [
+        lockedColorsObjects[i].hue,
+        lockedColorsObjects[i].saturation,
+        lockedColorsObjects[i].lightness,
+      ];
+    }
+  } else {
+    mainColorArray = generateRandomColorHSL();
+  }
+  lockedColorsObjects = [];
+  // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   let h1;
   let s1;
   let l1;
