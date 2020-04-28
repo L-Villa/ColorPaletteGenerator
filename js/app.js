@@ -503,9 +503,9 @@ lockedColors = [];
 prevLockedColors = [];
 let iNeg = 0;
 function updateUI() {
-  iNeg = 0;
+  //todo: this portion should not be run if undo is clicked. put it into a seperate function
+  // ! after putting in seperate function remove checkDis
   initialColors = [...finalColors];
-  console.log(prevLockedColors);
   for (let i = 0; i < prevLockedColors.length; i++) {
     indexed = initialColors.indexOf(prevLockedColors[0]);
     initialColors.splice(indexed, 1);
@@ -526,7 +526,7 @@ function updateUI() {
     //   undoColors.push(finalColors[index]);
     // }
     if (checkDis.length === 0) {
-      undoColors.push(initialColors[i]);
+      undoColors.push(initialColors[index]);
     }
     //! this will run if undo is pressed
     // else {
@@ -573,10 +573,6 @@ function updateUI() {
     //     initialColors.push(finalColors[index]);
     //   }
     // }
-    console.log("outside last condition", iNeg);
-    console.log("index outside last condition", index);
-
-    console.log("before the chroma error?", initialColors);
   });
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
@@ -593,7 +589,6 @@ function updateUI() {
     const saturation = sliders[2];
     colorizeSliders(color, hue, brightness, saturation);
   });
-
   //reset inputs
   resetInputs();
   //check for button contrast
@@ -601,83 +596,193 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
-  console.log("before it is zero:", prevLockedColors);
   prevLockedColors = [];
   findPrimaryColors();
   console.log("todays", lockedColors);
   console.log("finfin", finalColors);
   console.log("initinit", initialColors);
   console.log("undoundo", undoColors);
-  console.log("undolength", undoColors.length);
 }
+
+// checkDis = [];
+// let undoButtonCount = 0;
+// function undoGenerate() {
+//   checkDis[0] = "undone";
+//   redoBtn.classList.add("active");
+//   undoButtonCount++;
+//   console.log("undolength init", undoColors.length);
+//   if (undoButtonCount === 1) {
+//     removeLastFiveIndex = undoColors.length - 5;
+//     firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
+//     firstRemovalCopy = [...firstRemoval];
+//     firstRemovalCopyReversed = firstRemovalCopy.reverse();
+//     for (let i = 0; i < 5; i++) {
+//       redoColors.unshift(firstRemovalCopyReversed[i]);
+//     }
+//     generateButtonCount = 1;
+//     redoButtonCount = 0;
+//   }
+//   let totalNoOfColors = undoColors.length;
+//   finalColors = [];
+//   initialColors = [];
+//   if (undoColors.length > 0) {
+//     pastIndex = totalNoOfColors - 5;
+//     for (i = pastIndex; i < totalNoOfColors; i++) {
+//       finalColors.push(undoColors[i]);
+//     }
+//     updateUI();
+//     for (let i = 0; i < 5; i++) {
+//       redoColors.unshift(undoColors.pop());
+//     }
+//   }
+//   if (undoColors.length === 0) {
+//     undoBtn.classList.remove("active");
+//   }
+//   console.log("undolength fin", undoColors.length);
+//   checkDis = [];
+// }
 
 checkDis = [];
 let undoButtonCount = 0;
+let int = 0;
 function undoGenerate() {
-  checkDis[0] = "undone";
-  redoBtn.classList.add("active");
-  undoButtonCount++;
-  console.log("undolength init", undoColors.length);
-  if (undoButtonCount === 1) {
-    removeLastFiveIndex = undoColors.length - 5;
-    firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
-    firstRemovalCopy = [...firstRemoval];
-    firstRemovalCopyReversed = firstRemovalCopy.reverse();
-    for (let i = 0; i < 5; i++) {
-      redoColors.unshift(firstRemovalCopyReversed[i]);
-    }
-    generateButtonCount = 1;
-    redoButtonCount = 0;
-  }
-  let totalNoOfColors = undoColors.length;
-  finalColors = [];
   initialColors = [];
-  if (undoColors.length > 0) {
-    pastIndex = totalNoOfColors - 5;
-    for (i = pastIndex; i < totalNoOfColors; i++) {
-      finalColors.push(undoColors[i]);
-    }
-    updateUI();
-    for (let i = 0; i < 5; i++) {
-      redoColors.unshift(undoColors.pop());
-    }
+  undoButtonCount++;
+  redoBtn.classList.add("active");
+  checkDis[0] = "pressed";
+  if (undoButtonCount === 1) {
+    int = undoColors.length - 10;
+    redoButtonCount = 0;
+  } else {
+    int = int - 5 * (undoButtonCount - 1);
   }
-  if (undoColors.length === 0) {
+  int2 = int;
+  console.log("int", int);
+  console.log("int", int2);
+  for (let i = 0; i < 5; i++) {
+    // initialColors[i] = undoColors[int2];
+    initialColors.push(undoColors[int2]);
+    int2++;
+  }
+  console.log("int", int);
+  console.log("int", int2);
+
+  //! this should be in the update UI function
+  colorDivs.forEach((div, index) => {
+    const hexText = div.children[0];
+    //add color to bg
+    div.style.backgroundColor = initialColors[index];
+    hexText.innerText = initialColors[index];
+    //check for contrast
+    checkContrast(initialColors[index], hexText);
+    //initial colorize sliders
+    const color = chroma(initialColors[index]);
+    const sliders = div.querySelectorAll(".sliders input");
+    const hue = sliders[0];
+    const brightness = sliders[1];
+    const saturation = sliders[2];
+    colorizeSliders(color, hue, brightness, saturation);
+  });
+  //reset inputs
+  resetInputs();
+  //check for button contrast
+  adjustButton.forEach((button, index) => {
+    checkContrast(initialColors[index], button);
+    checkContrast(initialColors[index], lockButton[index]);
+  });
+  //! update UI function ends here
+
+  prevLockedColors = [];
+  if (int === 0) {
     undoBtn.classList.remove("active");
   }
-  console.log("undolength fin", undoColors.length);
-  checkDis = [];
+  // findPrimaryColors();
 }
 
 let redoButtonCount = 0;
 function redoGenerate() {
-  checkDis[0] = "undone";
+  initialColors = [];
   redoButtonCount++;
+  checkDis[0] = "pressed";
   if (redoButtonCount === 1) {
-    testArray = redoColors.splice(0, 5);
-    for (let i = 0; i < 5; i++) {
-      undoColors.push(testArray[i]);
-    }
+    int = int2;
     undoButtonCount = 0;
   }
-  finalColors = [];
-  initialColors = [];
-  if (redoColors.length > 0) {
-    pastIndex = 0;
-    for (i = pastIndex; i < 5; i++) {
-      finalColors.push(redoColors[i]);
-      undoColors.push(redoColors[i]);
-    }
-    updateUI();
-    redoColors.splice(0, 5);
+  // if (undoButtonCount === 1) {
+  //   int = undoColors.length - 10;
+  // } else {
+  //   int = int - 5 * (undoButtonCount - 1);
+  // }
+  // int2 = int;
+  console.log("re int", int);
+  // console.log("re int", int2);
+  for (let i = 0; i < 5; i++) {
+    // initialColors[i] = undoColors[int2];
+    initialColors.push(undoColors[int]);
+    int++;
   }
-  if (redoColors.length === 0) {
-    redoBtn.classList.remove("active");
-  }
+  console.log("re int", int);
+  // console.log("re int", int2);
+
+  //! this should be in the update UI function
+  colorDivs.forEach((div, index) => {
+    const hexText = div.children[0];
+    //add color to bg
+    div.style.backgroundColor = initialColors[index];
+    hexText.innerText = initialColors[index];
+    //check for contrast
+    checkContrast(initialColors[index], hexText);
+    //initial colorize sliders
+    const color = chroma(initialColors[index]);
+    const sliders = div.querySelectorAll(".sliders input");
+    const hue = sliders[0];
+    const brightness = sliders[1];
+    const saturation = sliders[2];
+    colorizeSliders(color, hue, brightness, saturation);
+  });
+  //reset inputs
+  resetInputs();
+  //check for button contrast
+  adjustButton.forEach((button, index) => {
+    checkContrast(initialColors[index], button);
+    checkContrast(initialColors[index], lockButton[index]);
+  });
+  //! update UI function ends here
   if (!undoBtn.classList.contains("active")) {
     undoBtn.classList.add("active");
   }
-  checkDis = [];
+  prevLockedColors = [];
+  if (int === undoColors.length) {
+    redoBtn.classList.remove("active");
+  }
+
+  // checkDis[0] = "undone";
+  // redoButtonCount++;
+  // if (redoButtonCount === 1) {
+  //   testArray = redoColors.splice(0, 5);
+  //   for (let i = 0; i < 5; i++) {
+  //     undoColors.push(testArray[i]);
+  //   }
+  //   undoButtonCount = 0;
+  // }
+  // finalColors = [];
+  // initialColors = [];
+  // if (redoColors.length > 0) {
+  //   pastIndex = 0;
+  //   for (i = pastIndex; i < 5; i++) {
+  //     finalColors.push(redoColors[i]);
+  //     undoColors.push(redoColors[i]);
+  //   }
+  //   updateUI();
+  //   redoColors.splice(0, 5);
+  // }
+  // if (redoColors.length === 0) {
+  //   redoBtn.classList.remove("active");
+  // }
+  // if (!undoBtn.classList.contains("active")) {
+  //   undoBtn.classList.add("active");
+  // }
+  // checkDis = [];
 }
 
 //todo: find a better place to run this function
@@ -686,8 +791,6 @@ lockedColorsObjects = [];
 // testtesttest = [];
 // console.log("initialPrev", previouslyLockedColors);
 function findPrimaryColors() {
-  console.log("thisOneIsLocked:", lockedColors);
-  console.log("thisOneIsLockedPrev:", prevLockedColors);
   for (let i = 0; i < lockedColors.length; i++) {
     //get luminance
     const lum = chroma(lockedColors[i]).luminance();
