@@ -499,10 +499,7 @@ arrayNum5 = ["1", "5", "3", "4", "5"];
 indexed2 = arrayNum5.indexOf(arrayNum3[0]);
 console.log(indexed2);
 
-lockedColors = [];
-prevLockedColors = [];
-let iNeg = 0;
-function updateUI() {
+function currentColors() {
   //todo: this portion should not be run if undo is clicked. put it into a seperate function
   // ! after putting in seperate function remove checkDis
   initialColors = [...finalColors];
@@ -525,8 +522,11 @@ function updateUI() {
     //   initialColors.push(finalColors[index]);
     //   undoColors.push(finalColors[index]);
     // }
+
+    
     if (checkDis.length === 0) {
       undoColors.push(initialColors[index]);
+      //! dont push colors here. try splice?
     }
     //! this will run if undo is pressed
     // else {
@@ -574,6 +574,12 @@ function updateUI() {
     //   }
     // }
   });
+}
+
+lockedColors = [];
+prevLockedColors = [];
+let iNeg = 0;
+function updateUI() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
     //add color to bg
@@ -596,6 +602,7 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
+  setWebTemplateColors();
   prevLockedColors = [];
   findPrimaryColors();
   console.log("todays", lockedColors);
@@ -644,29 +651,36 @@ function updateUI() {
 
 checkDis = [];
 let undoButtonCount = 0;
+let undoButtonCount2 = 0;
 let int = 0;
 function undoGenerate() {
-  initialColors = [];
+  // initialColors = [];
   undoButtonCount++;
+  undoButtonCount2++;
+  //! i think int should be initiated when the very first colors are generated
+  //! nevermind. make initial colors only depend on this func if undoGen has been used at least once. ie count2 > 1;
+  if (undoButtonCount2 === 1) {
+    int = undoColors.length;
+  }
   redoBtn.classList.add("active");
   checkDis[0] = "pressed";
   if (undoButtonCount === 1) {
-    int = undoColors.length - 10;
+    int = int - 10;
     redoButtonCount = 0;
   } else {
-    int = int - 5 * (undoButtonCount - 1);
+    int = int - 5;
   }
   int2 = int;
   console.log("int", int);
   console.log("int", int2);
   for (let i = 0; i < 5; i++) {
     // initialColors[i] = undoColors[int2];
-    initialColors.push(undoColors[int2]);
+    initialColors[i] = undoColors[int2];
+    // initialColors.push(undoColors[int2]);
     int2++;
   }
   console.log("int", int);
   console.log("int", int2);
-
   //! this should be in the update UI function
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
@@ -690,6 +704,8 @@ function undoGenerate() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
+  //? should this not go here????????????????????????????????????
+  // setWebTemplateColors();
   //! update UI function ends here
 
   prevLockedColors = [];
@@ -1063,7 +1079,7 @@ function generateColorScheme() {
   // finalColors = [...sortedHex];
   // sortableColors = [];
   // sortedHex = [];
-  setWebTemplateColors();
+  currentColors();
   updateUI();
 }
 
