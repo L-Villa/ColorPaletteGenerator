@@ -112,7 +112,7 @@ function randomColorSchemeType() {
   splitComplimentaryColor = false;
   triadicColor = false;
   tetradicColor = false;
-  switch (randNo) {
+  switch (2) {
     case 1:
       complimentaryColor = true;
       break;
@@ -396,39 +396,190 @@ function sortColors() {
     // redoColors.push(sortedHex[i]);
   }
   finalColors = [...sortedHex];
-
   // remove primary colors from final colors
   sortableColors = [];
   sortedHex = [];
 }
 
+arrayNum = ["1", "2", "3", "4", "5"];
+arrayNum2 = [];
+testString = "1";
+arrayNum3 = [testString];
+// arrayNum4 = ['locked', 0, 0, 0, 0];
+arrayNum4 = [0, 0, "locked", 0, 0];
+// arrayNum4 = [0, 0, 0, 0, 'locked'];
+let ii = 0;
+let used = 0;
+
+// hmm make initialcolors equal to finalcolors and then if div has locked use splice to replace with lockedColor
+for (let i = 0; i < 5; i++) {
+  if (arrayNum4[i] === "locked") {
+    arrayNum2.push(testString);
+    ii = i;
+  } else if (arrayNum3.indexOf(arrayNum[i]) === -1) {
+    arrayNum2.push(arrayNum[i]);
+  }
+}
+if (arrayNum2.length < 5) {
+  arrayNum2.splice(ii - 1, 0, arrayNum[ii]);
+}
+
+//two versions
+// arrayNum[i] != arrayNum3[0]
+// arrayNum2.indexOf(arrayNum[i]) === -1
+
+// for (let i = 0; i < 5; i++) {
+//   if (arrayNum4[i] === 'locked') {
+
+//     // make if statement to decide whether test string is pushed first of arrayNum is pushed first
+//     // if index of locked div greater than 3 then test string should be pushed second?
+//     if (i <= 4) {
+//       arrayNum2.push(testString);
+
+//       if (arrayNum2.indexOf(arrayNum[i]) === -1) {
+//         arrayNum2.push(arrayNum[i]);
+//       }
+//     } else if (i > 4) {
+
+//       if (arrayNum2.indexOf(arrayNum[i]) === -1) {
+//         arrayNum2.push(arrayNum[i]);
+//       }
+//       arrayNum2.push(testString);
+//     }
+//   }
+//   else if (arrayNum[i] != arrayNum3[0] && arrayNum[i] != arrayNum3[1]) {
+//     arrayNum2.push(arrayNum[i]);
+//   }
+//   if (arrayNum2.length === 6) {
+//     indexed = arrayNum2.indexOf(arrayNum3[0], 1);
+//     arrayNum2.splice(indexed, 1);
+//   }
+
+// else {
+//   if (i < 3) {
+//     arrayNum2.push(arrayNum[ii + 2]);
+//   } else if ( i > 3) {
+
+//     arrayNum2.push(arrayNum[ii]);
+//   } else {
+//     arrayNum2.push(arrayNum[ii]);
+//   }
+// }
+
+// arrayNum4 = [0, "locked", 0, 0, 0];
+// arrayNum3 = ["5"];
+// //initialColors
+// arrayNum2 = [];
+// //finalColors
+// arrayNum = ["1", "2", "3", "4", "5"];
+// let ii = 0;
+// for (let i = 0; i < 5; i++) {
+//   if (arrayNum4[i] === "locked") {
+//     indexed = arrayNum2.indexOf(arrayNum3[0]);
+//     console.log(indexed);
+//     if (indexed != -1) {
+//       arrayNum2[indexed] = arrayNum[i];
+//     }
+
+//     arrayNum2.push("no");
+//     ii = i;
+//     console.log("should be locked position", ii);
+//   } else {
+//     arrayNum2.push(arrayNum[i]);
+//   }
+//  console.log(arrayNum2);
+//   // else if (arrayNum3.indexOf(arrayNum[i]) === -1) {
+//   //   arrayNum2.push(arrayNum[ii]);
+//   //   ii++;
+//   // }
+// }
+// console.log(arrayNum2);
+
+arrayNum5 = ["1", "5", "3", "4", "5"];
+indexed2 = arrayNum5.indexOf(arrayNum3[0]);
+console.log(indexed2);
+
 lockedColors = [];
+prevLockedColors = [];
+let iNeg = 0;
 function updateUI() {
+  iNeg = 0;
+  initialColors = [...finalColors];
+  console.log(prevLockedColors);
+  for (let i = 0; i < prevLockedColors.length; i++) {
+    indexed = initialColors.indexOf(prevLockedColors[0]);
+    initialColors.splice(indexed, 1);
+  }
+  console.log(initialColors);
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
     //add color to array
     //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
-    if (checkDis.length === 0) {
-      if (div.classList.contains("locked")) {
-        initialColors.push(hexText.innerText);
-        undoColors.push(hexText.innerText);
-        lockedColors.push(hexText.innerText);
-        return;
-      } else {
-        initialColors.push(finalColors[index]);
-        undoColors.push(finalColors[index]);
-        lockedColors.push(0);
-      }
-    } else {
-      if (div.classList.contains("locked")) {
-        initialColors.push(hexText.innerText);
-        lockedColors.push(hexText.innerText);
-        return;
-      } else {
-        initialColors.push(finalColors[index]);
-        lockedColors.push(0);
-      }
+    //todo: try to move this if statement part to its own function so it doesnt run every time the UI is updated!
+    if (div.classList.contains("locked")) {
+      //before i push this new colors, delete the repeated one and replace it with the one the new one replaces
+      initialColors.splice(index, 0, hexText.innerText);
+      lockedColors.push(hexText.innerText);
     }
+    // else if (finalColors[index] != prevLockedColors[0]) {
+    //   initialColors.push(finalColors[index]);
+    //   undoColors.push(finalColors[index]);
+    // }
+    if (checkDis.length === 0) {
+      undoColors.push(initialColors[i]);
+    }
+    //! this will run if undo is pressed
+    // else {
+    //   if (div.classList.contains("locked")) {
+    //     initialColors.splice(index, 0, hexText.innerText);
+    //     lockedColors.push(hexText.innerText);
+    //     return;
+    //     //todo: fix bug that repeats locked color
+    //     // if ______ is not equal to the innerText then push color to initialColors
+    //   }
+    //   // else if (finalColors[index] != prevLockedColors[0]) {
+    //   //   console.log("bottom one is running");
+    //   //   initialColors.push(finalColors[index]);
+    //   // }
+    // }
+    // if (checkDis.length === 0) {
+    //   if (div.classList.contains("locked")) {
+    //     initialColors.push(hexText.innerText);
+    //     undoColors.push(hexText.innerText);
+    //     lockedColors.push(hexText.innerText);
+    //     iNeg = index;
+    //     return iNeg;
+    //   } else if (finalColors[index] != prevLockedColors[0]) {
+    //     iNeg++;
+    //     initialColors.push(finalColors[index]);
+    //     undoColors.push(finalColors[index]);
+    //   } else {
+    //     console.log("inside last condition", iNeg);
+    //     iNeg++;
+    //     initialColors.push(finalColors[iNeg]);
+    //     undoColors.push(finalColors[iNeg]);
+    //   }
+    // }
+    // //! this will run if undo is pressed
+    // else {
+    //   if (div.classList.contains("locked")) {
+    //     initialColors.push(hexText.innerText);
+    //     lockedColors.push(hexText.innerText);
+    //     return;
+    //     //todo: fix bug that repeats locked color
+    //     // if ______ is not equal to the innerText then push color to initialColors
+    //   } else if (finalColors[index] != prevLockedColors[0]) {
+    //     console.log("bottom one is running");
+    //     initialColors.push(finalColors[index]);
+    //   }
+    // }
+    console.log("outside last condition", iNeg);
+    console.log("index outside last condition", index);
+
+    console.log("before the chroma error?", initialColors);
+  });
+  colorDivs.forEach((div, index) => {
+    const hexText = div.children[0];
     //add color to bg
     div.style.backgroundColor = initialColors[index];
     hexText.innerText = initialColors[index];
@@ -442,6 +593,7 @@ function updateUI() {
     const saturation = sliders[2];
     colorizeSliders(color, hue, brightness, saturation);
   });
+
   //reset inputs
   resetInputs();
   //check for button contrast
@@ -449,20 +601,23 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
+  console.log("before it is zero:", prevLockedColors);
+  prevLockedColors = [];
   findPrimaryColors();
   console.log("todays", lockedColors);
-  console.log(initialColors);
-  console.log('undolength', undoColors.length);
-
+  console.log("finfin", finalColors);
+  console.log("initinit", initialColors);
+  console.log("undoundo", undoColors);
+  console.log("undolength", undoColors.length);
 }
 
 checkDis = [];
 let undoButtonCount = 0;
 function undoGenerate() {
-  checkDis[0] = 'undone';
+  checkDis[0] = "undone";
   redoBtn.classList.add("active");
   undoButtonCount++;
-  console.log('undolength init', undoColors.length);
+  console.log("undolength init", undoColors.length);
   if (undoButtonCount === 1) {
     removeLastFiveIndex = undoColors.length - 5;
     firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
@@ -490,13 +645,13 @@ function undoGenerate() {
   if (undoColors.length === 0) {
     undoBtn.classList.remove("active");
   }
-  console.log('undolength fin', undoColors.length);
+  console.log("undolength fin", undoColors.length);
   checkDis = [];
 }
 
 let redoButtonCount = 0;
 function redoGenerate() {
-  checkDis[0] = 'undone';
+  checkDis[0] = "undone";
   redoButtonCount++;
   if (redoButtonCount === 1) {
     testArray = redoColors.splice(0, 5);
@@ -526,36 +681,26 @@ function redoGenerate() {
 }
 
 //todo: find a better place to run this function
-previouslyLockedColors = [NaN, NaN, NaN, NaN, NaN];
+// previouslyLockedColors = [];
 lockedColorsObjects = [];
-testtesttest = [];
-console.log("initialPrev", previouslyLockedColors);
+// testtesttest = [];
+// console.log("initialPrev", previouslyLockedColors);
 function findPrimaryColors() {
-  console.log(lockedColors);
-  for (let i = 0; i < 5; i++) {
-    if (lockedColors[i] != 0) {
-      previouslyLockedColors[i] = lockedColors[i];
-      //get luminance
-      const lum = chroma(previouslyLockedColors[i]).luminance();
-      //convert to hsl
-      const hsl = chroma(previouslyLockedColors[i]).hsl();
-      //push new object to an array
-      lockedColorsObjects.push(new ColorHSL(hsl[0], hsl[1], hsl[2], lum));
-    } else {
-      previouslyLockedColors[i] = "NaN";
-    }
+  console.log("thisOneIsLocked:", lockedColors);
+  console.log("thisOneIsLockedPrev:", prevLockedColors);
+  for (let i = 0; i < lockedColors.length; i++) {
+    //get luminance
+    const lum = chroma(lockedColors[i]).luminance();
+    //convert to hsl
+    const hsl = chroma(lockedColors[i]).hsl();
+    //push new object to an array
+    lockedColorsObjects.push(new ColorHSL(hsl[0], hsl[1], hsl[2], lum));
   }
-  testtesttest = [...previouslyLockedColors];
-  mainColorArray = [];
-  // if (lockedColorsObjects.length > 0) {
-  //   for (let i = 0; i <lockedColorsObjects.length; i++) {
-  //     mainColorArray = [lockedColorsObjects[i].hue, lockedColorsObjects[i].saturation, lockedColorsObjects[i].lightness]
-  //   }
-  // } else {
-  //   mainColorArray = generateRandomColorHSL();
-  // }
-  // lockedColorsObjects = [];
-  console.log("prev", previouslyLockedColors);
+  prevLockedColors = [...lockedColors];
+  prevLockedColors = prevLockedColors.map(function (x) {
+    return x.toLowerCase();
+  });
+  //! is this where locked colors should be cleared?
   lockedColors = [];
 }
 
