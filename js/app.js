@@ -145,51 +145,50 @@ function randDecimal() {
 //todo: also, try to make another webpage that uses more colors so that tetradic doesnt look bad?
 function setWebTemplateColors() {
   boxShadowColors = [];
-  boxShadowLight = chroma(finalColors[0]).darken(0.3).hex();
-  boxShadowDark = chroma(finalColors[0]).darken(0.8).hex();
+  boxShadowLight = chroma(initialColors[0]).darken(0.3).hex();
+  boxShadowDark = chroma(initialColors[0]).darken(0.8).hex();
   boxShadowColors.push(boxShadowDark);
   boxShadowColors.push(boxShadowLight);
   root.style.setProperty("--boxShadow1", boxShadowColors[0]);
   root.style.setProperty("--boxShadow2", boxShadowColors[1]);
-
   //todo: set if statements (if color to light, darken or if not enough contrast, increase it. etc.)
   //todo: go set the hover color to an accent color variable?
   if (complimentaryColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[4]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[3]);
-    root.style.setProperty("--accentColor3", finalColors[1]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[4]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[3]);
+    root.style.setProperty("--accentColor3", initialColors[1]);
   } else if (monochromaticColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[1]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[2]);
-    root.style.setProperty("--accentColor3", finalColors[2]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[1]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[2]);
+    root.style.setProperty("--accentColor3", initialColors[2]);
   } else if (analogousColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[4]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[3]);
-    root.style.setProperty("--accentColor3", finalColors[0]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[4]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[3]);
+    root.style.setProperty("--accentColor3", initialColors[0]);
   } else if (splitComplimentaryColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[4]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[3]);
-    root.style.setProperty("--accentColor3", finalColors[0]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[4]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[3]);
+    root.style.setProperty("--accentColor3", initialColors[0]);
   } else if (triadicColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[4]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[3]);
-    root.style.setProperty("--accentColor3", finalColors[0]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[4]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[3]);
+    root.style.setProperty("--accentColor3", initialColors[0]);
   } else if (tetradicColor) {
-    root.style.setProperty("--primaryColor", finalColors[0]);
-    root.style.setProperty("--secondaryColor", finalColors[4]);
-    root.style.setProperty("--accentColor", finalColors[3]);
-    root.style.setProperty("--accentColor2", finalColors[3]);
-    root.style.setProperty("--accentColor3", finalColors[0]);
+    root.style.setProperty("--primaryColor", initialColors[0]);
+    root.style.setProperty("--secondaryColor", initialColors[4]);
+    root.style.setProperty("--accentColor", initialColors[3]);
+    root.style.setProperty("--accentColor2", initialColors[3]);
+    root.style.setProperty("--accentColor3", initialColors[0]);
   }
 }
 
@@ -413,7 +412,6 @@ function currentColors() {
     undoColors[int] = initialColors[i];
     int++;
   }
-  console.log("currentColors int:", int);
 }
 
 lockedColors = [];
