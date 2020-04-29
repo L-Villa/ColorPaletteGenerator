@@ -343,10 +343,8 @@ function sortColors() {
     primaryColors.sort((a, b) => a.luminance - b.luminance);
     secondaryColors.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...primaryColors, ...secondaryColors];
-    // console.log("comp is not issue");
   } else if (monochromaticColor) {
     sortTheseColors.sort((a, b) => a.luminance - b.luminance);
-    // console.log("mono is not issue");
   } else if (analogousColor) {
     anaSort = [...sortTheseColors];
     firstColor = [anaSort[0], anaSort[3]];
@@ -355,7 +353,6 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    // console.log("analagous is not issue");
   } else if (splitComplimentaryColor) {
     splitSort = [...sortTheseColors];
     firstColor = [splitSort[1], splitSort[3]];
@@ -364,7 +361,6 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    // console.log("split is not issue");
   } else if (triadicColor) {
     triSort = [...sortTheseColors];
     firstColor = [triSort[1], triSort[3]];
@@ -373,12 +369,7 @@ function sortColors() {
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
-    // console.log("triadic is not issue");
   }
-  // else if (tetradicColor) {
-  //tetradic does not require the colors to be sorted
-  // console.log("tetra is not issue");
-  // } // I should add an else statement
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const hexColor = chroma
       .hsl(
@@ -388,116 +379,11 @@ function sortColors() {
       )
       .hex();
     sortedHex.push(hexColor);
-    // if (generateButtonCount === 2) {
-    //   undoColors.push(sortedHex[i]);
-    // }
-    // generatedColors.push(sortedHex[i]);
-    // undoColors.push(sortedHex[i]);
-    // redoColors.push(sortedHex[i]);
   }
   finalColors = [...sortedHex];
-  // remove primary colors from final colors
   sortableColors = [];
   sortedHex = [];
 }
-
-arrayNum = ["1", "2", "3", "4", "5"];
-arrayNum2 = [];
-testString = "1";
-arrayNum3 = [testString];
-// arrayNum4 = ['locked', 0, 0, 0, 0];
-arrayNum4 = [0, 0, "locked", 0, 0];
-// arrayNum4 = [0, 0, 0, 0, 'locked'];
-let ii = 0;
-let used = 0;
-
-// hmm make initialcolors equal to finalcolors and then if div has locked use splice to replace with lockedColor
-for (let i = 0; i < 5; i++) {
-  if (arrayNum4[i] === "locked") {
-    arrayNum2.push(testString);
-    ii = i;
-  } else if (arrayNum3.indexOf(arrayNum[i]) === -1) {
-    arrayNum2.push(arrayNum[i]);
-  }
-}
-if (arrayNum2.length < 5) {
-  arrayNum2.splice(ii - 1, 0, arrayNum[ii]);
-}
-
-//two versions
-// arrayNum[i] != arrayNum3[0]
-// arrayNum2.indexOf(arrayNum[i]) === -1
-
-// for (let i = 0; i < 5; i++) {
-//   if (arrayNum4[i] === 'locked') {
-
-//     // make if statement to decide whether test string is pushed first of arrayNum is pushed first
-//     // if index of locked div greater than 3 then test string should be pushed second?
-//     if (i <= 4) {
-//       arrayNum2.push(testString);
-
-//       if (arrayNum2.indexOf(arrayNum[i]) === -1) {
-//         arrayNum2.push(arrayNum[i]);
-//       }
-//     } else if (i > 4) {
-
-//       if (arrayNum2.indexOf(arrayNum[i]) === -1) {
-//         arrayNum2.push(arrayNum[i]);
-//       }
-//       arrayNum2.push(testString);
-//     }
-//   }
-//   else if (arrayNum[i] != arrayNum3[0] && arrayNum[i] != arrayNum3[1]) {
-//     arrayNum2.push(arrayNum[i]);
-//   }
-//   if (arrayNum2.length === 6) {
-//     indexed = arrayNum2.indexOf(arrayNum3[0], 1);
-//     arrayNum2.splice(indexed, 1);
-//   }
-
-// else {
-//   if (i < 3) {
-//     arrayNum2.push(arrayNum[ii + 2]);
-//   } else if ( i > 3) {
-
-//     arrayNum2.push(arrayNum[ii]);
-//   } else {
-//     arrayNum2.push(arrayNum[ii]);
-//   }
-// }
-
-// arrayNum4 = [0, "locked", 0, 0, 0];
-// arrayNum3 = ["5"];
-// //initialColors
-// arrayNum2 = [];
-// //finalColors
-// arrayNum = ["1", "2", "3", "4", "5"];
-// let ii = 0;
-// for (let i = 0; i < 5; i++) {
-//   if (arrayNum4[i] === "locked") {
-//     indexed = arrayNum2.indexOf(arrayNum3[0]);
-//     console.log(indexed);
-//     if (indexed != -1) {
-//       arrayNum2[indexed] = arrayNum[i];
-//     }
-
-//     arrayNum2.push("no");
-//     ii = i;
-//     console.log("should be locked position", ii);
-//   } else {
-//     arrayNum2.push(arrayNum[i]);
-//   }
-//  console.log(arrayNum2);
-//   // else if (arrayNum3.indexOf(arrayNum[i]) === -1) {
-//   //   arrayNum2.push(arrayNum[ii]);
-//   //   ii++;
-//   // }
-// }
-// console.log(arrayNum2);
-
-arrayNum5 = ["1", "5", "3", "4", "5"];
-indexed2 = arrayNum5.indexOf(arrayNum3[0]);
-console.log(indexed2);
 
 function currentColors() {
   //todo: this portion should not be run if undo is clicked. put it into a seperate function
@@ -517,12 +403,7 @@ function currentColors() {
       initialColors.splice(index, 0, hexText.innerText);
       lockedColors.push(hexText.innerText);
     }
-
-    // if (checkDis.length === 0) {
-    //   undoColors.push(initialColors[index]);
-    // }
   });
-  //! currently keeps int from redo button which means something that I do not know
   if (undoButtonCount3 > 0) {
     int = int + 5; // this should only happen once
   }
@@ -537,16 +418,12 @@ function currentColors() {
 
 lockedColors = [];
 prevLockedColors = [];
-let iNeg = 0;
 function updateUI() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
-    //add color to bg
     div.style.backgroundColor = initialColors[index];
     hexText.innerText = initialColors[index];
-    //check for contrast
     checkContrast(initialColors[index], hexText);
-    //initial colorize sliders
     const color = chroma(initialColors[index]);
     const sliders = div.querySelectorAll(".sliders input");
     const hue = sliders[0];
@@ -554,9 +431,7 @@ function updateUI() {
     const saturation = sliders[2];
     colorizeSliders(color, hue, brightness, saturation);
   });
-  //reset inputs
   resetInputs();
-  //check for button contrast
   adjustButton.forEach((button, index) => {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
@@ -564,66 +439,17 @@ function updateUI() {
   setWebTemplateColors();
   prevLockedColors = [];
   findPrimaryColors();
-  console.log("todays", lockedColors);
-  console.log("finfin", finalColors);
-  console.log("initinit", initialColors);
-  console.log("undoundo", undoColors);
 }
 
-// checkDis = [];
-// let undoButtonCount = 0;
-// function undoGenerate() {
-//   checkDis[0] = "undone";
-//   redoBtn.classList.add("active");
-//   undoButtonCount++;
-//   console.log("undolength init", undoColors.length);
-//   if (undoButtonCount === 1) {
-//     removeLastFiveIndex = undoColors.length - 5;
-//     firstRemoval = undoColors.splice(removeLastFiveIndex, 5);
-//     firstRemovalCopy = [...firstRemoval];
-//     firstRemovalCopyReversed = firstRemovalCopy.reverse();
-//     for (let i = 0; i < 5; i++) {
-//       redoColors.unshift(firstRemovalCopyReversed[i]);
-//     }
-//     generateButtonCount = 1;
-//     redoButtonCount = 0;
-//   }
-//   let totalNoOfColors = undoColors.length;
-//   finalColors = [];
-//   initialColors = [];
-//   if (undoColors.length > 0) {
-//     pastIndex = totalNoOfColors - 5;
-//     for (i = pastIndex; i < totalNoOfColors; i++) {
-//       finalColors.push(undoColors[i]);
-//     }
-//     updateUI();
-//     for (let i = 0; i < 5; i++) {
-//       redoColors.unshift(undoColors.pop());
-//     }
-//   }
-//   if (undoColors.length === 0) {
-//     undoBtn.classList.remove("active");
-//   }
-//   console.log("undolength fin", undoColors.length);
-//   checkDis = [];
-// }
-
-checkDis = [];
 let undoButtonCount = 0;
 let undoButtonCount2 = 0;
 let undoButtonCount3 = 0;
 let int = 0;
 let int2 = 0;
 function undoGenerate() {
-  // initialColors = [];
   undoButtonCount++;
   undoButtonCount2++;
   undoButtonCount3++;
-  //! i think int should be initiated when the very first colors are generated
-  //! nevermind. make initial colors only depend on this func if undoGen has been used at least once. ie count2 > 1;
-  // if (undoButtonCount2 === 1) {
-  //   int = undoColors.length;
-  // }
   redoBtn.classList.add("active");
   checkDis[0] = "pressed";
   if (undoButtonCount === 1) {
@@ -634,48 +460,14 @@ function undoGenerate() {
     int = int - 5;
   }
   int2 = int;
-  console.log("int", int);
-  console.log("int", int2);
   for (let i = 0; i < 5; i++) {
-    // initialColors[i] = undoColors[int2];
     initialColors[i] = undoColors[int2];
-    // initialColors.push(undoColors[int2]);
     int2++;
   }
-  console.log("int", int);
-  console.log("int", int2);
-  //! this should be in the update UI function
-  colorDivs.forEach((div, index) => {
-    const hexText = div.children[0];
-    //add color to bg
-    div.style.backgroundColor = initialColors[index];
-    hexText.innerText = initialColors[index];
-    //check for contrast
-    checkContrast(initialColors[index], hexText);
-    //initial colorize sliders
-    const color = chroma(initialColors[index]);
-    const sliders = div.querySelectorAll(".sliders input");
-    const hue = sliders[0];
-    const brightness = sliders[1];
-    const saturation = sliders[2];
-    colorizeSliders(color, hue, brightness, saturation);
-  });
-  //reset inputs
-  resetInputs();
-  //check for button contrast
-  adjustButton.forEach((button, index) => {
-    checkContrast(initialColors[index], button);
-    checkContrast(initialColors[index], lockButton[index]);
-  });
-  //? should this not go here????????????????????????????????????
-  // setWebTemplateColors();
-  //! update UI function ends here
-
-  prevLockedColors = [];
+  updateUI();
   if (int === 0) {
     undoBtn.classList.remove("active");
   }
-  checkDis = [];
   // findPrimaryColors();
 }
 
@@ -685,82 +477,22 @@ function redoGenerate() {
   initialColors = [];
   redoButtonCount++;
   undoButtonCount3 = 0;
-  // undoButtonCount2 = 0;
-  checkDis[0] = "pressed";
   if (redoButtonCount === 1) {
     int = int2;
     redoButtonCountMax = undoButtonCount;
     undoButtonCount = 0;
   }
-  console.log("re int", int);
   for (let i = 0; i < 5; i++) {
     initialColors.push(undoColors[int]);
     int++;
   }
-  console.log("re int", int);
-
-  //! this should be in the update UI function
-  colorDivs.forEach((div, index) => {
-    const hexText = div.children[0];
-    //add color to bg
-    div.style.backgroundColor = initialColors[index];
-    hexText.innerText = initialColors[index];
-    //check for contrast
-    checkContrast(initialColors[index], hexText);
-    //initial colorize sliders
-    const color = chroma(initialColors[index]);
-    const sliders = div.querySelectorAll(".sliders input");
-    const hue = sliders[0];
-    const brightness = sliders[1];
-    const saturation = sliders[2];
-    colorizeSliders(color, hue, brightness, saturation);
-  });
-  //reset inputs
-  resetInputs();
-  //check for button contrast
-  adjustButton.forEach((button, index) => {
-    checkContrast(initialColors[index], button);
-    checkContrast(initialColors[index], lockButton[index]);
-  });
-  //! update UI function ends here
+  updateUI();
   if (!undoBtn.classList.contains("active")) {
     undoBtn.classList.add("active");
   }
-  prevLockedColors = [];
-  // if (int === undoColors.length) {
-  //   redoBtn.classList.remove("active");
-  // }
   if (redoButtonCount === redoButtonCountMax) {
     redoBtn.classList.remove("active");
   }
-
-  // checkDis[0] = "undone";
-  // redoButtonCount++;
-  // if (redoButtonCount === 1) {
-  //   testArray = redoColors.splice(0, 5);
-  //   for (let i = 0; i < 5; i++) {
-  //     undoColors.push(testArray[i]);
-  //   }
-  //   undoButtonCount = 0;
-  // }
-  // finalColors = [];
-  // initialColors = [];
-  // if (redoColors.length > 0) {
-  //   pastIndex = 0;
-  //   for (i = pastIndex; i < 5; i++) {
-  //     finalColors.push(redoColors[i]);
-  //     undoColors.push(redoColors[i]);
-  //   }
-  //   updateUI();
-  //   redoColors.splice(0, 5);
-  // }
-  // if (redoColors.length === 0) {
-  //   redoBtn.classList.remove("active");
-  // }
-  // if (!undoBtn.classList.contains("active")) {
-  //   undoBtn.classList.add("active");
-  // }
-  // checkDis = [];
 }
 
 //todo: find a better place to run this function
