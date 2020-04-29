@@ -231,8 +231,8 @@ function generateAccent(NoAccents, colorLocation, array) {
   for (i = 0; i < numberOfAccents; i++) {
     chooseColor = colorLocation;
     RandRandNo = Math.random() * 3;
-    saturationRandNo = Math.random() * 3;
-    darkenRandNo = Math.random() * 4;
+    saturationRandNo = Math.random() * 1;
+    darkenRandNo = Math.random() * 3.5;
     arrayHex = HSLToHex(array);
     accentColor = arrayHex;
     const lum = chroma(accentColor).luminance();
@@ -384,14 +384,19 @@ function sortColors() {
   sortedHex = [];
 }
 
+let lockedColors = [];
+let prevLockedColors = [];
 function currentColors() {
   //todo: this portion should not be run if undo is clicked. put it into a seperate function
-  // ! after putting in seperate function remove checkDis
   initialColors = [...finalColors];
   for (let i = 0; i < prevLockedColors.length; i++) {
     indexed = initialColors.indexOf(prevLockedColors[0]);
-    initialColors.splice(indexed, 1);
+    console.log('indexed:', indexed);
+    if (indexed != -1) {
+      initialColors.splice(indexed, 1);
+    }
   }
+  indexed = -1;
   console.log(initialColors);
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
@@ -400,9 +405,10 @@ function currentColors() {
     if (div.classList.contains("locked")) {
       //before i push this new colors, delete the repeated one and replace it with the one the new one replaces
       initialColors.splice(index, 0, hexText.innerText);
-      lockedColors.push(hexText.innerText);
     }
   });
+  //todo: put loop here to delete any colors that make array index greater than 5...
+  //! but first try to fix the lagging issue
   if (undoButtonCount3 > 0) {
     int = int + 5; // this should only happen once
   }
@@ -412,10 +418,11 @@ function currentColors() {
     undoColors[int] = initialColors[i];
     int++;
   }
+  prevLockedColors = [];
+  // findPrimaryColors();
+  console.log('end', initialColors);
 }
 
-lockedColors = [];
-prevLockedColors = [];
 function updateUI() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
@@ -434,9 +441,8 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
+  //! also update template colors when resetting inputs?
   setWebTemplateColors();
-  prevLockedColors = [];
-  findPrimaryColors();
 }
 
 let undoButtonCount = 0;
@@ -499,6 +505,12 @@ lockedColorsObjects = [];
 // testtesttest = [];
 // console.log("initialPrev", previouslyLockedColors);
 function findPrimaryColors() {
+  colorDivs.forEach((div, index) => {
+    const hexText = div.children[0];
+  if (div.classList.contains('locked')) {
+    lockedColors.push(hexText.innerText);
+  }
+});
   for (let i = 0; i < lockedColors.length; i++) {
     //get luminance
     const lum = chroma(lockedColors[i]).luminance();
@@ -518,6 +530,7 @@ function findPrimaryColors() {
 mainColorArray = [];
 generateButtonCount = 0;
 function generateColorScheme() {
+  findPrimaryColors();
   generateButtonCount++;
   initialColors = [];
   mainColors = [];
