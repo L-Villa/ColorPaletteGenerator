@@ -512,68 +512,27 @@ function currentColors() {
     const hexText = div.children[0];
     //add color to array
     //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
-    //todo: try to move this if statement part to its own function so it doesnt run every time the UI is updated!
     if (div.classList.contains("locked")) {
       //before i push this new colors, delete the repeated one and replace it with the one the new one replaces
       initialColors.splice(index, 0, hexText.innerText);
       lockedColors.push(hexText.innerText);
     }
-    // else if (finalColors[index] != prevLockedColors[0]) {
-    //   initialColors.push(finalColors[index]);
-    //   undoColors.push(finalColors[index]);
-    // }
 
-    
-    if (checkDis.length === 0) {
-      undoColors.push(initialColors[index]);
-      //! dont push colors here. try splice?
-    }
-    //! this will run if undo is pressed
-    // else {
-    //   if (div.classList.contains("locked")) {
-    //     initialColors.splice(index, 0, hexText.innerText);
-    //     lockedColors.push(hexText.innerText);
-    //     return;
-    //     //todo: fix bug that repeats locked color
-    //     // if ______ is not equal to the innerText then push color to initialColors
-    //   }
-    //   // else if (finalColors[index] != prevLockedColors[0]) {
-    //   //   console.log("bottom one is running");
-    //   //   initialColors.push(finalColors[index]);
-    //   // }
-    // }
     // if (checkDis.length === 0) {
-    //   if (div.classList.contains("locked")) {
-    //     initialColors.push(hexText.innerText);
-    //     undoColors.push(hexText.innerText);
-    //     lockedColors.push(hexText.innerText);
-    //     iNeg = index;
-    //     return iNeg;
-    //   } else if (finalColors[index] != prevLockedColors[0]) {
-    //     iNeg++;
-    //     initialColors.push(finalColors[index]);
-    //     undoColors.push(finalColors[index]);
-    //   } else {
-    //     console.log("inside last condition", iNeg);
-    //     iNeg++;
-    //     initialColors.push(finalColors[iNeg]);
-    //     undoColors.push(finalColors[iNeg]);
-    //   }
-    // }
-    // //! this will run if undo is pressed
-    // else {
-    //   if (div.classList.contains("locked")) {
-    //     initialColors.push(hexText.innerText);
-    //     lockedColors.push(hexText.innerText);
-    //     return;
-    //     //todo: fix bug that repeats locked color
-    //     // if ______ is not equal to the innerText then push color to initialColors
-    //   } else if (finalColors[index] != prevLockedColors[0]) {
-    //     console.log("bottom one is running");
-    //     initialColors.push(finalColors[index]);
-    //   }
+    //   undoColors.push(initialColors[index]);
     // }
   });
+  //! currently keeps int from redo button which means something that I do not know
+  if (undoButtonCount3 > 0) {
+    int = int + 5; // this should only happen once
+  }
+  undoButtonCount3 = 0;
+
+  for (let i = 0; i < 5; i++) {
+    undoColors[int] = initialColors[i];
+    int++;
+  }
+  console.log("currentColors int:", int);
 }
 
 lockedColors = [];
@@ -652,21 +611,25 @@ function updateUI() {
 checkDis = [];
 let undoButtonCount = 0;
 let undoButtonCount2 = 0;
+let undoButtonCount3 = 0;
 let int = 0;
+let int2 = 0;
 function undoGenerate() {
   // initialColors = [];
   undoButtonCount++;
   undoButtonCount2++;
+  undoButtonCount3++;
   //! i think int should be initiated when the very first colors are generated
   //! nevermind. make initial colors only depend on this func if undoGen has been used at least once. ie count2 > 1;
-  if (undoButtonCount2 === 1) {
-    int = undoColors.length;
-  }
+  // if (undoButtonCount2 === 1) {
+  //   int = undoColors.length;
+  // }
   redoBtn.classList.add("active");
   checkDis[0] = "pressed";
   if (undoButtonCount === 1) {
     int = int - 10;
     redoButtonCount = 0;
+    generateButtonCount = 1;
   } else {
     int = int - 5;
   }
@@ -712,33 +675,29 @@ function undoGenerate() {
   if (int === 0) {
     undoBtn.classList.remove("active");
   }
+  checkDis = [];
   // findPrimaryColors();
 }
 
 let redoButtonCount = 0;
+let redoButtonCountMax = 0;
 function redoGenerate() {
   initialColors = [];
   redoButtonCount++;
+  undoButtonCount3 = 0;
+  // undoButtonCount2 = 0;
   checkDis[0] = "pressed";
   if (redoButtonCount === 1) {
     int = int2;
+    redoButtonCountMax = undoButtonCount;
     undoButtonCount = 0;
   }
-  // if (undoButtonCount === 1) {
-  //   int = undoColors.length - 10;
-  // } else {
-  //   int = int - 5 * (undoButtonCount - 1);
-  // }
-  // int2 = int;
   console.log("re int", int);
-  // console.log("re int", int2);
   for (let i = 0; i < 5; i++) {
-    // initialColors[i] = undoColors[int2];
     initialColors.push(undoColors[int]);
     int++;
   }
   console.log("re int", int);
-  // console.log("re int", int2);
 
   //! this should be in the update UI function
   colorDivs.forEach((div, index) => {
@@ -768,7 +727,10 @@ function redoGenerate() {
     undoBtn.classList.add("active");
   }
   prevLockedColors = [];
-  if (int === undoColors.length) {
+  // if (int === undoColors.length) {
+  //   redoBtn.classList.remove("active");
+  // }
+  if (redoButtonCount === redoButtonCountMax) {
     redoBtn.classList.remove("active");
   }
 
