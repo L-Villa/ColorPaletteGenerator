@@ -16,11 +16,9 @@ const closeAdjustments = document.querySelectorAll(".close-adjustment");
 const sliderContainers = document.querySelectorAll(".sliders");
 let initialColors;
 
-//This is for local storage
 let savedPalettes = [];
 
 //event listeners
-//todo: remove the generate button. Only use space to generate so that it doesnt mess things up
 generateBtn.addEventListener("click", generateColorScheme);
 undoBtn.addEventListener("click", undoGenerate);
 redoBtn.addEventListener("click", redoGenerate);
@@ -37,9 +35,9 @@ colorDivs.forEach((div, index, e) => {
   div.addEventListener("change", () => {
     updateTextUI(index);
   });
-  div.addEventListener("click", () => {
-    toggleLock(index);
-  });
+  // div.addEventListener("click", () => {
+  //   toggleLock(index);
+  // });
 });
 currentHexes.forEach((hex) => {
   hex.addEventListener("click", () => {
@@ -63,12 +61,12 @@ closeAdjustments.forEach((button, index) => {
     e.stopPropagation();
   });
 });
-// lockButton.forEach((button, index) => {
-//   button.addEventListener('click', (e) => {
-//     toggleLock(index);
-//     e.stopPropagation();
-//   })
-// })
+lockButton.forEach((button, index) => {
+  button.addEventListener("click", (e) => {
+    toggleLock(index);
+    e.stopPropagation();
+  });
+});
 
 // Functions ------------------------------------------------
 function generateRandomColorHSL() {
@@ -104,7 +102,6 @@ let splitComplimentaryColor = false;
 let triadicColor = false;
 let tetradicColor = false;
 function randomColorSchemeType() {
-  // randNo = Math.floor(Math.random() * 6) + 1;
   randNo = Math.floor(Math.random() * 6) + 1;
   complimentaryColor = false;
   monochromaticColor = false;
@@ -112,7 +109,7 @@ function randomColorSchemeType() {
   splitComplimentaryColor = false;
   triadicColor = false;
   tetradicColor = false;
-  switch (2) {
+  switch (randNo) {
     case 1:
       complimentaryColor = true;
       break;
@@ -141,8 +138,6 @@ function randDecimal() {
   return randNo;
 }
 
-//todo: work on this function. Try sorting colors so that dark are primary?
-//todo: also, try to make another webpage that uses more colors so that tetradic doesnt look bad?
 function setWebTemplateColors() {
   boxShadowColors = [];
   boxShadowLight = chroma(initialColors[0]).darken(0.3).hex();
@@ -151,8 +146,6 @@ function setWebTemplateColors() {
   boxShadowColors.push(boxShadowLight);
   root.style.setProperty("--boxShadow1", boxShadowColors[0]);
   root.style.setProperty("--boxShadow2", boxShadowColors[1]);
-  //todo: set if statements (if color to light, darken or if not enough contrast, increase it. etc.)
-  //todo: go set the hover color to an accent color variable?
   if (complimentaryColor) {
     root.style.setProperty("--primaryColor", initialColors[0]);
     root.style.setProperty("--secondaryColor", initialColors[4]);
@@ -192,40 +185,6 @@ function setWebTemplateColors() {
   }
 }
 
-// function createAccentColors() {
-//   const numberOfColors = primaryColors.length;
-//   const numberOfAccents = 5 - numberOfColors;
-//   for (i = 0; i < numberOfAccents; i++) {
-//     chooseColor = Math.floor(Math.random() * numberOfColors);
-//     saturationRandNo = Math.random() * 2;
-//     darkenRandNo = Math.random() * 3;
-//     accentColor = primaryColors[chooseColor];
-//     const lum = chroma(accentColor).luminance();
-//     if (lum >= 0.8 && lum < 1) {
-//       accentColorSaturation = chroma(accentColor)
-//         .desaturate(saturationRandNo)
-//         .darken(darkenRandNo)
-//         .hex();
-//     } else if (lum >= 0.5 && lum < 0.8) {
-//       accentColorSaturation = chroma(accentColor)
-//         .desaturate(saturationRandNo)
-//         .darken(darkenRandNo)
-//         .hex();
-//     } else if (lum >= 0.3 && lum < 0.5) {
-//       accentColorSaturation = chroma(accentColor)
-//         .saturate(saturationRandNo)
-//         .brighten(darkenRandNo)
-//         .hex();
-//     } else {
-//       accentColorSaturation = chroma(accentColor)
-//         .saturate(saturationRandNo)
-//         .brighten(darkenRandNo)
-//         .hex();
-//     }
-//     accentColors.push(accentColorSaturation);
-//   }
-// }
-
 function generateAccent(NoAccents, colorLocation, array) {
   const numberOfAccents = NoAccents;
   for (i = 0; i < numberOfAccents; i++) {
@@ -263,42 +222,9 @@ function generateAccent(NoAccents, colorLocation, array) {
 }
 
 // !move these arrays up top later?
-generatedColors = [];
-undoColors = [];
-redoColors = [];
-// colorDivs.forEach((div, index) => {
-//   const hexText = div.children[0];
-//   //add color to array
-//   //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
-//   if (div.classList.contains("locked")) {
-//     initialColors.push(hexText.innerText);
-//     return;
-//   } else {
-//     initialColors.push(finalColors[index]);
-//   }
-//   //add color to bg
-//   div.style.backgroundColor = finalColors[index];
-//   hexText.innerText = finalColors[index];
-//   //check for contrast
-//   checkContrast(finalColors[index], hexText);
-//   //initial colorize sliders
-//   const color = chroma(finalColors[index]);
-//   const sliders = div.querySelectorAll(".sliders input");
-//   const hue = sliders[0];
-//   const brightness = sliders[1];
-//   const saturation = sliders[2];
-//   colorizeSliders(color, hue, brightness, saturation);
-// });
-// //reset inputs
-// resetInputs();
-// //check for button contrast
-// adjustButton.forEach((button, index) => {
-//   checkContrast(initialColors[index], button);
-//   checkContrast(initialColors[index], lockButton[index]);
-// });
-
-// generatedColors = [];
-
+let generatedColors = [];
+let undoColors = [];
+let redoColors = [];
 function ColorHSL(hue, saturation, lightness, luminance) {
   this.hue = hue;
   this.saturation = saturation;
@@ -324,7 +250,6 @@ function sortColors() {
   for (let i = 0; i < sortTheseHexColors.length; i++) {
     const lum = chroma(sortTheseHexColors[i]).luminance();
     const hexConvertedToHSL = hexToHSL(sortTheseHexColors[i]);
-    // const hexConvertedToHSL = chroma(sortTheseHexColors[i]).hsl();
     sortableColors.push(
       new ColorHSL(
         hexConvertedToHSL[0],
@@ -345,10 +270,10 @@ function sortColors() {
   } else if (monochromaticColor) {
     sortTheseColors.sort((a, b) => a.luminance - b.luminance);
   } else if (analogousColor) {
-    anaSort = [...sortTheseColors];
-    firstColor = [anaSort[0], anaSort[3]];
-    secondColor = [anaSort[1]];
-    thirdColor = [anaSort[2], anaSort[4]];
+    analogousSort = [...sortTheseColors];
+    firstColor = [analogousSort[0], analogousSort[3]];
+    secondColor = [analogousSort[1]];
+    thirdColor = [analogousSort[2], analogousSort[4]];
     firstColor.sort((a, b) => a.luminance - b.luminance);
     thirdColor.sort((a, b) => b.luminance - a.luminance);
     sortTheseColors = [...firstColor, ...secondColor, ...thirdColor];
@@ -387,30 +312,22 @@ function sortColors() {
 let lockedColors = [];
 let prevLockedColors = [];
 function currentColors() {
-  //todo: this portion should not be run if undo is clicked. put it into a seperate function
   initialColors = [...finalColors];
   for (let i = 0; i < prevLockedColors.length; i++) {
-    indexed = initialColors.indexOf(prevLockedColors[0]);
-    console.log('indexed:', indexed);
+    indexed = initialColors.indexOf(prevLockedColors[i]);
     if (indexed != -1) {
       initialColors.splice(indexed, 1);
     }
   }
   indexed = -1;
-  console.log(initialColors);
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
-    //add color to array
-    //todo: bug here. If first color div is locked, then that color should be pushed to primary color array
     if (div.classList.contains("locked")) {
-      //before i push this new colors, delete the repeated one and replace it with the one the new one replaces
       initialColors.splice(index, 0, hexText.innerText);
     }
   });
-  //todo: put loop here to delete any colors that make array index greater than 5...
-  //! but first try to fix the lagging issue
   if (undoButtonCount3 > 0) {
-    int = int + 5; // this should only happen once
+    int = int + 5;
   }
   undoButtonCount3 = 0;
 
@@ -419,8 +336,6 @@ function currentColors() {
     int++;
   }
   prevLockedColors = [];
-  // findPrimaryColors();
-  console.log('end', initialColors);
 }
 
 function updateUI() {
@@ -441,7 +356,6 @@ function updateUI() {
     checkContrast(initialColors[index], button);
     checkContrast(initialColors[index], lockButton[index]);
   });
-  //! also update template colors when resetting inputs?
   setWebTemplateColors();
 }
 
@@ -472,7 +386,6 @@ function undoGenerate() {
   if (int === 0) {
     undoBtn.classList.remove("active");
   }
-  // findPrimaryColors();
 }
 
 let redoButtonCount = 0;
@@ -499,31 +412,23 @@ function redoGenerate() {
   }
 }
 
-//todo: find a better place to run this function
-// previouslyLockedColors = [];
 lockedColorsObjects = [];
-// testtesttest = [];
-// console.log("initialPrev", previouslyLockedColors);
 function findPrimaryColors() {
   colorDivs.forEach((div, index) => {
     const hexText = div.children[0];
-  if (div.classList.contains('locked')) {
-    lockedColors.push(hexText.innerText);
-  }
-});
+    if (div.classList.contains("locked")) {
+      lockedColors.push(hexText.innerText);
+    }
+  });
   for (let i = 0; i < lockedColors.length; i++) {
-    //get luminance
     const lum = chroma(lockedColors[i]).luminance();
-    //convert to hsl
     const hsl = chroma(lockedColors[i]).hsl();
-    //push new object to an array
     lockedColorsObjects.push(new ColorHSL(hsl[0], hsl[1], hsl[2], lum));
   }
   prevLockedColors = [...lockedColors];
   prevLockedColors = prevLockedColors.map(function (x) {
     return x.toLowerCase();
   });
-  //! is this where locked colors should be cleared?
   lockedColors = [];
 }
 
@@ -542,9 +447,6 @@ function generateColorScheme() {
   undoButtonCount = 0;
   redoButtonCount = 0;
   redoBtn.classList.remove("active");
-  // if (mainColorArray.length === 0) {
-  //   mainColorArray = generateRandomColorHSL();
-  // }
   if (generateButtonCount == 2) {
     undoBtn.classList.add("active");
   }
@@ -562,7 +464,6 @@ function generateColorScheme() {
     mainColorArray = generateRandomColorHSL();
   }
   lockedColorsObjects = [];
-  // const numberOfColors = Math.floor(Math.random() * 2) + 2;
   let h1;
   let s1;
   let l1;
@@ -586,7 +487,6 @@ function generateColorScheme() {
   thirdColor = [];
   fourthColor = [];
   accentColors = [];
-  // todo: color choice here if locked value
   if (complimentaryColor) {
     const primaryColorLocation = 0;
     const numberOfPrimaryAccents = 2;
@@ -766,24 +666,6 @@ function generateColorScheme() {
     fourthColor = [HSLToHex(h3Array)];
     sortColors();
   }
-  // if (fourthColor.length > 0) {
-  //   primaryColors = [
-  //     ...mainColor,
-  //     ...secondColor,
-  //     ...thirdColor,
-  //     ...fourthColor,
-  //   ];
-  // } else if (thirdColor.length > 0) {
-  //   primaryColors = [...mainColor, ...secondColor, ...thirdColor];
-  // } else {
-  //   primaryColors = [...mainColor, ...secondColor];
-  // }
-  //!generate accent colors here or above?
-  // createAccentColors()
-  // finalColors = [...primaryColors, ...accentColors2];
-  // finalColors = [...sortedHex];
-  // sortableColors = [];
-  // sortedHex = [];
   currentColors();
   updateUI();
 }
@@ -798,14 +680,11 @@ function checkContrast(color, text) {
 }
 
 function colorizeSliders(color, hue, brightness, saturation) {
-  //saturation scale
   const minSat = color.set("hsl.s", 0);
   const maxSat = color.set("hsl.s", 1);
   const scaleSat = chroma.scale([minSat, color, maxSat]);
-  //brightness scale
   const midBright = color.set("hsl.l", 0.5);
   const scaleBright = chroma.scale(["black", midBright, "white"]);
-  //update input colors
   saturation.style.backgroundImage = `linear-gradient(to right, ${scaleSat(
     0
   )}, ${scaleSat(1)})`;
@@ -839,7 +718,6 @@ function updateTextUI(index) {
   const textHex = activeDiv.querySelector("h2");
   const icons = activeDiv.querySelectorAll(".controls button");
   textHex.innerText = color.hex();
-  //check contrast
   checkContrast(color, textHex);
   for (icon of icons) {
     checkContrast(color, icon);
