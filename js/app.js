@@ -1,5 +1,6 @@
 //Global selections and variables
 const root = document.documentElement;
+const containers = document.querySelectorAll(".colors");
 const colorDivs = document.querySelectorAll(".color");
 const generateBtn = document.querySelector(".generate");
 const undoBtn = document.querySelector(".undo");
@@ -10,6 +11,7 @@ const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll(".color h2");
 const popup = document.querySelector(".copy-container");
 const controls = document.querySelectorAll(".controls");
+const dragButton = document.querySelectorAll(".drag");
 const adjustButton = document.querySelectorAll(".adjust");
 const lockButton = document.querySelectorAll(".lock");
 const closeAdjustments = document.querySelectorAll(".close-adjustment");
@@ -68,7 +70,49 @@ lockButton.forEach((button, index) => {
   });
 });
 
+colorDivs.forEach((color) => {
+  color.addEventListener("dragstart", () => {
+    color.classList.add("dragging");
+  });
+
+  color.addEventListener("dragend", () => {
+    color.classList.remove("dragging");
+  });
+});
+
+containers.forEach((container) => {
+  container.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const afterElement = getDragAfterElement(container, e.clientX);
+    const color = document.querySelector(".dragging");
+    if (afterElement == null) {
+      container.appendChild(color);
+    } else {
+      container.insertBefore(color, afterElement);
+    }
+  });
+});
+
 // Functions ------------------------------------------------
+function getDragAfterElement(container, x) {
+  const colorElements = [
+    ...container.querySelectorAll(".color:not(.dragging)"),
+  ];
+
+  return colorElements.reduce(
+    (closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = x - box.left - box.width / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    },
+    { offset: Number.NEGATIVE_INFINITY }
+  ).element;
+}
+
 function generateRandomColorHSL() {
   const H = chroma.random().hsl();
   return H;
@@ -195,7 +239,6 @@ function generateAccent(NoAccents, colorLocation, array) {
     arrayHex = HSLToHex(array);
     accentColor = arrayHex;
     const lum = chroma(accentColor).luminance();
-    //todo: dont always change both saturation and brightness
     if (lum >= 0.8 && lum < 1) {
       accentColorSaturation = chroma(accentColor)
         .desaturate(saturationRandNo)
@@ -222,9 +265,7 @@ function generateAccent(NoAccents, colorLocation, array) {
 }
 
 // !move these arrays up top later?
-let generatedColors = [];
-let undoColors = [];
-let redoColors = [];
+let history = [];
 function ColorHSL(hue, saturation, lightness, luminance) {
   this.hue = hue;
   this.saturation = saturation;
@@ -332,7 +373,7 @@ function currentColors() {
   undoButtonCount3 = 0;
 
   for (let i = 0; i < 5; i++) {
-    undoColors[int] = initialColors[i];
+    history[int] = initialColors[i];
     int++;
   }
   prevLockedColors = [];
@@ -369,7 +410,6 @@ function undoGenerate() {
   undoButtonCount2++;
   undoButtonCount3++;
   redoBtn.classList.add("active");
-  checkDis[0] = "pressed";
   if (undoButtonCount === 1) {
     int = int - 10;
     redoButtonCount = 0;
@@ -379,7 +419,7 @@ function undoGenerate() {
   }
   int2 = int;
   for (let i = 0; i < 5; i++) {
-    initialColors[i] = undoColors[int2];
+    initialColors[i] = history[int2];
     int2++;
   }
   updateUI();
@@ -400,7 +440,7 @@ function redoGenerate() {
     undoButtonCount = 0;
   }
   for (let i = 0; i < 5; i++) {
-    initialColors.push(undoColors[int]);
+    initialColors.push(history[int]);
     int++;
   }
   updateUI();
@@ -442,8 +482,6 @@ function generateColorScheme() {
   accentColors = [];
   accentColors2 = [];
   colorLuminance = [];
-  redoColors = [];
-  checkDis = [];
   undoButtonCount = 0;
   redoButtonCount = 0;
   redoBtn.classList.remove("active");

@@ -19,6 +19,17 @@ svg {
   pointer-events: none;
 }
 
+/* ! this not the actual color css */
+.color {
+  cursor: move;
+}
+
+.color.dragging {
+  opacity: 0.5;
+}
+/* ! this not the actual color css */
+
+
 .colors {
   min-height: 90vh;
   display: flex;
@@ -159,12 +170,14 @@ svg {
 }
 
 .color:hover .adjust,
-.color:hover .lock {
+.color:hover .lock,
+.color:hover .drag {
   opacity: 0.4;
 }
 
 .adjust,
-.lock {
+.lock,
+.drag {
   font-size: 1.7rem;
   border: none;
   background: none;
@@ -179,12 +192,14 @@ svg {
 } */
 
 .color .adjust:hover,
-.color .lock:hover {
+.color .lock:hover,
+.color .drag:hover {
   opacity: 1;
 }
 
 .color .adjust.active,
-.color .lock.active {
+.color .lock.active,
+.color .drag.active {
   /* font-size: 2rem; */
   opacity: 1;
   transition: all 0.2s ease-in-out;
